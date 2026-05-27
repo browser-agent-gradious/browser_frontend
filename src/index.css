@@ -1,0 +1,166 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --font-body: 'Inter', system-ui, sans-serif;
+
+    /* Surfaces */
+    --color-bg: #ffffff;
+    --color-surface: #f9f9f9;
+    --color-surface-2: #f3f3f3;
+    --color-border: #e5e5e5;
+    --color-border-strong: #d1d1d1;
+
+    /* Text */
+    --color-text: #111111;
+    --color-text-muted: #555555;
+    --color-text-faint: #999999;
+
+    /* Black accent (buttons, links, active states) */
+    --color-accent: #111111;
+    --color-accent-hover: #333333;
+
+    /* Status */
+    --color-success: #16a34a;
+    --color-error: #dc2626;
+    --color-warning: #d97706;
+
+    /* Agent dialog */
+    --color-agent-bg: #f5f5f5;
+    --color-agent-dark-bg: #dddddd;
+    --color-agent-surface: #1a1a1a;
+    --color-agent-border: #eeeeee;
+    --color-agent-text: #444444;
+    --color-agent-muted: #777777;
+    --color-agent-faint: #444444;
+    --color-agent-mic: #111111;
+    --color-agent-mic-active: #111111;
+    --color-agent-dot-off: #ef4444;
+    --color-agent-dot-on: #22c55e;
+    --color-agent-log-default: #dddddd;
+    --color-agent-log-ack: #60a5fa;
+    --color-agent-log-result: #4ade80;
+    --color-agent-log-error: #f87171;
+    --color-agent-log-system: #dddddd;
+    --color-agent-log-step: #c084fc;
+
+    /* Spacing */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.25rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-10: 2.5rem;
+    --space-12: 3rem;
+
+    /* Radius */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-full: 9999px;
+
+    /* Type */
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.125rem;
+    --text-xl: 1.375rem;
+    --text-2xl: 1.75rem;
+
+    /* Transitions */
+    --transition: 180ms cubic-bezier(0.16, 1, 0.3, 1);
+
+    /* Shadows */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.10);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.14);
+}
+
+html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    color: var(--color-text);
+    background: var(--color-bg);
+    min-height: 100dvh;
+    line-height: 1.6;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+    display: block;
+    max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+    font: inherit;
+    color: inherit;
+}
+
+button {
+    cursor: pointer;
+    background: none;
+    border: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    text-wrap: balance;
+    line-height: 1.2;
+}
+
+p,
+li {
+    text-wrap: pretty;
+    max-width: 72ch;
+}
+
+a {
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: opacity var(--transition);
+}
+
+a:hover {
+    opacity: 0.65;
+}
+
+:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}

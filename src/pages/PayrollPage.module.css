@@ -1,0 +1,72 @@
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: var(--space-6);
+    align-items: start;
+}
+
+@media (max-width: 900px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.main {
+    min-width: 0;
+}
+
+.sectionTitle {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: var(--space-4);
+    letter-spacing: -0.01em;
+}
+
+.deductionList {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.deductionItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--color-border);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+}
+
+.deductionItem:last-child {
+    border-bottom: none;
+}
+
+.deductionLabel {
+    flex: 1;
+}
+
+.deductionAmt {
+    font-weight: 500;
+    color: var(--color-text);
+    font-variant-numeric: tabular-nums;
+}
+
+.deductionTotal {
+    font-weight: 700;
+    color: var(--color-text);
+    padding-top: var(--space-3);
+}
+
+.deductionTotal span {
+    color: var(--color-text);
+}

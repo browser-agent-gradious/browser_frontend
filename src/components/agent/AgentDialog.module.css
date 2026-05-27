@@ -1,0 +1,238 @@
+/* Wrapper: hidden by default, revealed when isOpen */
+.dialogWrapper {
+    position: fixed;
+    bottom: 92px;
+    right: 28px;
+    z-index: 999;
+    width: 340px;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+    transition: opacity 220ms cubic-bezier(0.16, 1, 0.3, 1),
+        transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dialogOpen {
+    pointer-events: all;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* Main container — dark themed matching sidepanel.html */
+.container {
+    background: var(--color-agent-bg);
+    border-radius: var(--radius-xl);
+    padding: var(--space-5) var(--space-5);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    border: 1px solid var(--color-agent-border);
+}
+
+/* ── Header ─────────────────────────────────────────── */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    width: 100%;
+    margin-bottom: var(--space-4);
+}
+
+.title {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-agent-text);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.statusDot {
+    width: 9px;
+    height: 9px;
+    border-radius: var(--radius-full);
+    background: var(--color-agent-dot-off);
+    flex-shrink: 0;
+    transition: background 0.4s;
+}
+
+.statusDotConnected {
+    background: var(--color-agent-dot-on);
+}
+
+/* ── Mic button ──────────────────────────────────────── */
+.micButton {
+    width: 76px;
+    height: 76px;
+    border-radius: var(--radius-full);
+    border: none;
+    background: var(--color-agent-mic);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.18s, box-shadow 0.18s, background 0.18s;
+    margin-bottom: var(--space-2);
+    flex-shrink: 0;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.micButton:active {
+    transform: scale(0.92);
+}
+
+.micRecording {
+    background: #222222;
+    box-shadow: 0 0 0 3px #444, 0 0 24px rgba(255, 255, 255, 0.08);
+    animation: micPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes micPulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.07);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* ── Status / hint ──────────────────────────────────── */
+.statusText {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: #444444;
+    margin-bottom: var(--space-1);
+    min-height: 1em;
+    letter-spacing: 0.01em;
+}
+
+.hintText {
+    font-size: var(--text-xs);
+    color: var(--color-agent-faint);
+    margin-bottom: var(--space-2);
+    letter-spacing: 0.01em;
+}
+
+/* ── Transcript box ─────────────────────────────────── */
+.transcriptBox {
+    width: 100%;
+    background: var(--color-agent-dark-bg);
+    border: 1px solid var(--color-agent-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--color-agent-text);
+    font-style: italic;
+    min-height: 38px;
+    text-align: left;
+    margin-bottom: var(--space-2);
+    transition: border-color 0.3s, color 0.3s;
+    line-height: 1.5;
+}
+
+.transcriptActive {
+    border-color: var(--color-agent-border);
+    color: var(--color-agent-text);
+    font-style: italic;
+}
+
+/* ── Logs header ─────────────────────────────────────── */
+.logsHeader {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-1);
+    padding: 0 var(--space-1);
+}
+
+.logsHeader span {
+    font-size: var(--text-xs);
+    color: var(--color-agent-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+}
+
+.clearBtn {
+    font-size: var(--text-xs);
+    color: var(--color-agent-faint);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    transition: color var(--transition);
+}
+
+.clearBtn:hover {
+    color: var(--color-agent-text);
+}
+
+/* ── Logs pane ──────────────────────────────────────── */
+.logs {
+    width: 100%;
+    height: 150px;
+    background: #000000;
+    border-radius: var(--radius-md);
+    padding: var(--space-2) var(--space-3);
+    overflow-y: auto;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.75rem;
+    line-height: 1.6;
+    color: var(--color-agent-log-default);
+}
+
+.logs::-webkit-scrollbar {
+    width: 4px;
+}
+
+.logs::-webkit-scrollbar-track {
+    background: #0a0a0a;
+}
+
+.logs::-webkit-scrollbar-thumb {
+    background: #2a2a2a;
+    border-radius: 4px;
+}
+
+.logLine {
+    display: block;
+}
+
+.logAck {
+    color: var(--color-agent-log-ack);
+}
+
+.logResult {
+    color: var(--color-agent-log-result);
+}
+
+.logError {
+    color: var(--color-agent-log-error);
+}
+
+.logSystem {
+    color: var(--color-agent-log-system);
+}
+
+.logStep {
+    color: var(--color-agent-log-step);
+}
+
+@media (max-width: 480px) {
+    .dialogWrapper {
+        right: 12px;
+        left: 12px;
+        width: auto;
+        bottom: 84px;
+    }
+}

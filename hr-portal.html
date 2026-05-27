@@ -1,0 +1,1904 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HR Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      -webkit-font-smoothing: antialiased;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 15px;
+      background: #f9f9f9;
+      color: #111;
+      min-height: 100vh;
+    }
+
+    /* ── Layout ──────────────────────────────────── */
+    .app-shell {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 220px;
+      min-height: 100vh;
+      background: #fff;
+      border-right: 1px solid #e8e8e8;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 100;
+    }
+
+    .sidebar-logo {
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid #e8e8e8;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sidebar-logo svg {
+      flex-shrink: 0;
+    }
+
+    .sidebar-logo-text {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: #111;
+    }
+
+    .sidebar-logo-sub {
+      font-size: 11px;
+      color: #888;
+      font-weight: 400;
+      margin-top: 1px;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 12px 0;
+    }
+
+    .sidebar-section-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #bbb;
+      padding: 12px 20px 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 20px;
+      font-size: 13.5px;
+      font-weight: 450;
+      color: #555;
+      cursor: pointer;
+      border-radius: 0;
+      transition: background 0.15s, color 0.15s;
+      text-decoration: none;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+    }
+
+    .nav-item:hover {
+      background: #f4f4f4;
+      color: #111;
+    }
+
+    .nav-item.active {
+      background: #111;
+      color: #fff;
+    }
+
+    .nav-item.active svg {
+      color: #fff;
+    }
+
+    .nav-item svg {
+      flex-shrink: 0;
+      opacity: 0.7;
+    }
+
+    .nav-item.active svg {
+      opacity: 1;
+    }
+
+    .sidebar-user {
+      padding: 16px 20px;
+      border-top: 1px solid #e8e8e8;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #111;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .user-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: #111;
+    }
+
+    .user-role {
+      font-size: 11px;
+      color: #888;
+    }
+
+    /* ── Main content ──────────────────────────── */
+    .main-content {
+      margin-left: 220px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid #e8e8e8;
+      padding: 0 32px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .topbar-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #111;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .topbar-badge {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      display: inline-block;
+      margin-right: 4px;
+    }
+
+    .topbar-date {
+      font-size: 12px;
+      color: #888;
+    }
+
+    .page-content {
+      padding: 32px;
+    }
+
+    .page-header {
+      margin-bottom: 28px;
+    }
+
+    .page-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #111;
+      letter-spacing: -0.02em;
+    }
+
+    .page-subtitle {
+      font-size: 13px;
+      color: #888;
+      margin-top: 4px;
+    }
+
+    /* ── Cards ─────────────────────────────────── */
+    .card {
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      border-radius: 10px;
+      padding: 20px 24px;
+    }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      letter-spacing: 0.02em;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+
+    .card-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #111;
+      letter-spacing: -0.02em;
+    }
+
+    .card-sub {
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 4px;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    /* ── Table ─────────────────────────────────── */
+    .table-card {
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .table-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #e8e8e8;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .table-header-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #111;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead th {
+      padding: 10px 20px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #aaa;
+      background: #fafafa;
+      border-bottom: 1px solid #e8e8e8;
+    }
+
+    tbody td {
+      padding: 13px 20px;
+      font-size: 13px;
+      color: #333;
+      border-bottom: 1px solid #f2f2f2;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover td {
+      background: #fafafa;
+    }
+
+    /* ── Badges ────────────────────────────────── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .badge-green {
+      background: #f0fdf4;
+      color: #16a34a;
+    }
+
+    .badge-yellow {
+      background: #fefce8;
+      color: #ca8a04;
+    }
+
+    .badge-red {
+      background: #fef2f2;
+      color: #dc2626;
+    }
+
+    .badge-gray {
+      background: #f4f4f4;
+      color: #666;
+    }
+
+    .badge-blue {
+      background: #eff6ff;
+      color: #2563eb;
+    }
+
+    /* ── Buttons ───────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s;
+    }
+
+    .btn-primary {
+      background: #111;
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: #333;
+    }
+
+    .btn-secondary {
+      background: #fff;
+      color: #111;
+      border: 1px solid #ddd;
+    }
+
+    .btn-secondary:hover {
+      background: #f4f4f4;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: #555;
+    }
+
+    .btn-ghost:hover {
+      background: #f4f4f4;
+      color: #111;
+    }
+
+    .btn-sm {
+      padding: 5px 11px;
+      font-size: 12px;
+    }
+
+    .btn-danger {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .btn-danger:hover {
+      background: #fecaca;
+    }
+
+    /* ── Forms ─────────────────────────────────── */
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 6px;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid #ddd;
+      border-radius: 7px;
+      font-size: 14px;
+      font-family: inherit;
+      color: #111;
+      background: #fff;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      outline: none;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      border-color: #111;
+      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-hint {
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 5px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    /* ── Divider ───────────────────────────────── */
+    .divider {
+      height: 1px;
+      background: #e8e8e8;
+      margin: 20px 0;
+    }
+
+    /* ── Section title in page ─────────────────── */
+    .section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #111;
+      margin-bottom: 12px;
+    }
+
+    /* ── Profile / info blocks ─────────────────── */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    /* .info-item {} */
+    .info-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #aaa;
+      margin-bottom: 3px;
+    }
+
+    .info-value {
+      font-size: 14px;
+      color: #111;
+    }
+
+    /* ── Timeline ──────────────────────────────── */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .timeline-item {
+      display: flex;
+      gap: 14px;
+      padding-bottom: 18px;
+      position: relative;
+    }
+
+    .timeline-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 11px;
+      top: 24px;
+      bottom: 0;
+      width: 1px;
+      background: #e8e8e8;
+    }
+
+    .timeline-dot {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #f4f4f4;
+      border: 1px solid #e8e8e8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      z-index: 1;
+    }
+
+    .timeline-dot.active {
+      background: #111;
+    }
+
+    /* .timeline-body {} */
+    .timeline-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: #111;
+    }
+
+    .timeline-meta {
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 2px;
+    }
+
+    /* ── Leave calendar strip ──────────────────── */
+    .leave-strip {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .leave-day {
+      width: 30px;
+      height: 30px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 500;
+      color: #888;
+      background: #f9f9f9;
+      border: 1px solid #efefef;
+    }
+
+    .leave-day.taken {
+      background: #111;
+      color: #fff;
+      border-color: #111;
+    }
+
+    .leave-day.pending {
+      background: #fef9c3;
+      color: #92400e;
+      border-color: #fef08a;
+    }
+
+    .leave-day.today {
+      border: 2px solid #111;
+      color: #111;
+      background: #fff;
+    }
+
+    /* ── Quick-actions ─────────────────────────── */
+    .quick-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+
+    .quick-action {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      color: #333;
+      transition: all 0.15s;
+    }
+
+    .quick-action:hover {
+      background: #111;
+      color: #fff;
+      border-color: #111;
+    }
+
+    .quick-action:hover svg {
+      color: #fff;
+    }
+
+    /* ── Announcement banner ───────────────────── */
+    .announcement {
+      background: #111;
+      color: #fff;
+      border-radius: 10px;
+      padding: 14px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .announcement-text {
+      font-size: 13px;
+    }
+
+    .announcement-badge {
+      font-size: 11px;
+      background: #fff;
+      color: #111;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+
+    /* ── Empty state ───────────────────────────── */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 20px;
+      color: #bbb;
+      text-align: center;
+    }
+
+    .empty-state svg {
+      margin-bottom: 12px;
+      opacity: 0.3;
+    }
+
+    .empty-state-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: #999;
+      margin-bottom: 6px;
+    }
+
+    .empty-state-sub {
+      font-size: 12px;
+      color: #ccc;
+    }
+
+    /* ── Tabs ──────────────────────────────────── */
+    .tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid #e8e8e8;
+      margin-bottom: 24px;
+    }
+
+    .tab {
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #888;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+      margin-bottom: -1px;
+      background: none;
+      border-left: none;
+      border-right: none;
+      border-top: none;
+    }
+
+    .tab:hover {
+      color: #111;
+    }
+
+    .tab.active {
+      color: #111;
+      border-bottom: 2px solid #111;
+    }
+
+    /* ── Modal ─────────────────────────────────── */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(2px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal {
+      background: #fff;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #111;
+    }
+
+    .modal-body {
+      padding: 20px 24px;
+    }
+
+    .modal-footer {
+      padding: 14px 24px;
+      border-top: 1px solid #f0f0f0;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    /* ── Notification dot ──────────────────────── */
+    .notif-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #ef4444;
+      display: inline-block;
+    }
+
+    /* ── ╔═══════════════════════════════╗
+         ║   AGENT DIALOG (dark theme)   ║
+         ╚═══════════════════════════════╝ */
+
+    .agent-trigger {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: #111;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+      z-index: 300;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+
+    .agent-trigger:hover {
+      transform: scale(1.08);
+      box-shadow: 0 6px 28px rgba(0, 0, 0, 0.35);
+    }
+
+    .agent-trigger.open {
+      background: #333;
+    }
+
+    .agent-trigger-ripple {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: rgba(17, 17, 17, 0.15);
+      z-index: 299;
+      animation: triggerPulse 2.5s ease-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes triggerPulse {
+      0% {
+        transform: scale(1);
+        opacity: 0.6;
+      }
+
+      100% {
+        transform: scale(2.2);
+        opacity: 0;
+      }
+    }
+
+    .agent-panel {
+      position: fixed;
+      bottom: 92px;
+      right: 28px;
+      width: 360px;
+      background: #1e1e1e;
+      border-radius: 16px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.06);
+      z-index: 301;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      transform-origin: bottom right;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s;
+    }
+
+    .agent-panel.hidden {
+      transform: scale(0.85) translateY(12px);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .agent-panel-header {
+      background: #121212;
+      padding: 14px 16px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid #2a2a2a;
+    }
+
+    .agent-panel-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #00d1b2;
+      letter-spacing: 0.01em;
+      flex: 1;
+    }
+
+    .agent-status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #ef4444;
+      flex-shrink: 0;
+      transition: background 0.4s;
+    }
+
+    .agent-status-dot.connected {
+      background: #22c55e;
+    }
+
+    .agent-close-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #555;
+      padding: 2px;
+      display: flex;
+      align-items: center;
+      transition: color 0.15s;
+    }
+
+    .agent-close-btn:hover {
+      color: #aaa;
+    }
+
+    .agent-panel-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    .mic-button {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      border: none;
+      background: #ff3860;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+      margin-bottom: 12px;
+      flex-shrink: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .mic-button:active {
+      transform: scale(0.93);
+    }
+
+    .mic-button.recording {
+      background: #00d1b2;
+      box-shadow: 0 0 22px rgba(0, 209, 178, 0.7);
+      animation: micPulse 1.5s infinite;
+    }
+
+    .mic-button.recording.toggled {
+      box-shadow: 0 0 28px rgba(0, 209, 178, 0.9), 0 0 0 4px rgba(0, 209, 178, 0.25);
+    }
+
+    @keyframes micPulse {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.08);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .mic-button.thinking {
+      background: #a78bfa;
+      box-shadow: 0 0 20px rgba(167, 139, 250, 0.6);
+      animation: micPulse 0.8s infinite;
+    }
+
+    .agent-status-text {
+      font-weight: 600;
+      font-size: 13px;
+      color: #bbb;
+      margin-bottom: 4px;
+      min-height: 1.2em;
+      letter-spacing: 0.02em;
+      text-align: center;
+    }
+
+    .agent-hint {
+      font-size: 11px;
+      color: #444;
+      margin-bottom: 12px;
+      letter-spacing: 0.01em;
+      text-align: center;
+    }
+
+    .agent-transcript {
+      width: 100%;
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-size: 12px;
+      color: #9ca3af;
+      font-style: italic;
+      min-height: 34px;
+      text-align: left;
+      margin-bottom: 12px;
+      transition: border-color 0.3s;
+    }
+
+    .agent-transcript.active {
+      border-color: #00d1b2;
+      color: #e0e0e0;
+      font-style: normal;
+    }
+
+    .agent-logs {
+      width: 100%;
+      height: 200px;
+      background: #000;
+      color: #0f0;
+      font-family: 'Courier New', Courier, monospace;
+      padding: 10px;
+      border-radius: 8px;
+      overflow-y: auto;
+      text-align: left;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .agent-logs::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .agent-logs::-webkit-scrollbar-track {
+      background: #111;
+    }
+
+    .agent-logs::-webkit-scrollbar-thumb {
+      background: #333;
+      border-radius: 4px;
+    }
+
+    .log-ack {
+      color: #00d1b2;
+    }
+
+    .log-result {
+      color: #0f0;
+    }
+
+    .log-error {
+      color: #ff3860;
+    }
+
+    .log-system {
+      color: #555;
+    }
+
+    .log-step {
+      color: #a78bfa;
+    }
+
+    .log-nav {
+      color: #60a5fa;
+    }
+
+    /* ── Responsive ────────────────────────────── */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 200px;
+        transform: translateX(-100%);
+        transition: transform 0.25s;
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .page-content {
+        padding: 20px 16px;
+      }
+
+      .kpi-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .agent-panel {
+        width: calc(100vw - 32px);
+        right: 16px;
+      }
+
+      .agent-trigger {
+        right: 16px;
+        bottom: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef, useCallback, createContext, useContext } = React;
+
+    // ── Agent Context ─────────────────────────────────────────────────────────
+    const AgentContext = createContext(null);
+    function useAgent() { return useContext(AgentContext); }
+
+    // ── Placeholder Data ──────────────────────────────────────────────────────
+    const EMPLOYEE = {
+      id: 'EMP-0042',
+      name: 'Arjun Sharma',
+      initials: 'AS',
+      role: 'Senior Software Engineer',
+      department: 'Engineering',
+      email: 'arjun.sharma@company.com',
+      phone: '+91 98765 43210',
+      location: 'Hyderabad, Telangana',
+      joinDate: '12 Aug 2021',
+      manager: 'Priya Mehta',
+      employmentType: 'Full-time',
+    };
+
+    const LEAVE_BALANCE = [
+      { type: 'Casual Leave', used: 4, total: 12, color: '#111' },
+      { type: 'Sick Leave', used: 2, total: 10, color: '#111' },
+      { type: 'Earned Leave', used: 8, total: 21, color: '#111' },
+      { type: 'Comp-off', used: 0, total: 3, color: '#111' },
+    ];
+
+    const LEAVE_HISTORY = [
+      { id: 'LV-001', type: 'Casual Leave', from: '2026-04-10', to: '2026-04-11', days: 2, reason: 'Personal work', status: 'Approved' },
+      { id: 'LV-002', type: 'Sick Leave', from: '2026-03-05', to: '2026-03-05', days: 1, reason: 'Fever', status: 'Approved' },
+      { id: 'LV-003', type: 'Casual Leave', from: '2026-02-14', to: '2026-02-14', days: 1, reason: 'Family function', status: 'Approved' },
+      { id: 'LV-004', type: 'Earned Leave', from: '2026-05-26', to: '2026-05-30', days: 5, reason: 'Vacation', status: 'Pending' },
+      { id: 'LV-005', type: 'Sick Leave', from: '2026-01-20', to: '2026-01-21', days: 2, reason: 'Medical appointment', status: 'Approved' },
+    ];
+
+    const PAYSLIPS = [
+      { month: 'April 2026', gross: '₹1,18,000', deductions: '₹21,200', net: '₹96,800', status: 'Released' },
+      { month: 'March 2026', gross: '₹1,18,000', deductions: '₹21,200', net: '₹96,800', status: 'Released' },
+      { month: 'February 2026', gross: '₹1,15,000', deductions: '₹20,700', net: '₹94,300', status: 'Released' },
+      { month: 'January 2026', gross: '₹1,15,000', deductions: '₹20,700', net: '₹94,300', status: 'Released' },
+      { month: 'December 2025', gross: '₹1,15,000', deductions: '₹20,700', net: '₹94,300', status: 'Released' },
+    ];
+
+    const PAYROLL_BREAKDOWN = [
+      { component: 'Basic Salary', amount: '₹59,000', type: 'earning' },
+      { component: 'HRA', amount: '₹23,600', type: 'earning' },
+      { component: 'Special Allowance', amount: '₹29,400', type: 'earning' },
+      { component: 'Performance Bonus', amount: '₹6,000', type: 'earning' },
+      { component: 'PF (Employee)', amount: '₹7,080', type: 'deduction' },
+      { component: 'Professional Tax', amount: '₹200', type: 'deduction' },
+      { component: 'TDS', amount: '₹13,920', type: 'deduction' },
+    ];
+
+    const ATTENDANCE = [
+      { date: 'Mon, 25 May 2026', checkIn: '09:12 AM', checkOut: '07:04 PM', hours: '9h 52m', status: 'Present' },
+      { date: 'Fri, 22 May 2026', checkIn: '09:30 AM', checkOut: '06:45 PM', hours: '9h 15m', status: 'Present' },
+      { date: 'Thu, 21 May 2026', checkIn: '09:05 AM', checkOut: '06:30 PM', hours: '9h 25m', status: 'Present' },
+      { date: 'Wed, 20 May 2026', checkIn: '09:22 AM', checkOut: '07:10 PM', hours: '9h 48m', status: 'Present' },
+      { date: 'Tue, 19 May 2026', checkIn: '--', checkOut: '--', hours: '--', status: 'On Leave' },
+      { date: 'Mon, 18 May 2026', checkIn: '09:45 AM', checkOut: '06:30 PM', hours: '8h 45m', status: 'Present' },
+      { date: 'Fri, 15 May 2026', checkIn: '10:02 AM', checkOut: '07:30 PM', hours: '9h 28m', status: 'Late' },
+    ];
+
+    const ANNOUNCEMENTS = [
+      { id: 1, title: 'Performance Review Cycle — Q2 FY2026 begins June 1st. Complete your self-assessment by June 10.', tag: 'Action Required' },
+      { id: 2, title: 'Office closed on June 17 (Eid al-Adha). Plan leaves accordingly.', tag: 'Holiday' },
+      { id: 3, title: 'Updated WFH policy: Up to 2 days per week from June onwards.', tag: 'Policy Update' },
+    ];
+
+    const TEAM = [
+      { name: 'Priya Mehta', role: 'Engineering Manager', initials: 'PM', status: 'Online' },
+      { name: 'Rohan Verma', role: 'Senior Software Engineer', initials: 'RV', status: 'Online' },
+      { name: 'Sneha Kapoor', role: 'Software Engineer', initials: 'SK', status: 'Away' },
+      { name: 'Aditya Nair', role: 'Software Engineer', initials: 'AN', status: 'Offline' },
+      { name: 'Kavya Reddy', role: 'QA Engineer', initials: 'KR', status: 'Online' },
+    ];
+
+    // ── Icons (inline SVG helpers) ────────────────────────────────────────────
+    const Icon = ({ path, size = 16, stroke = 'currentColor', fill = 'none', strokeWidth = 1.8 }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke={stroke} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        {typeof path === 'string' ? <path d={path} /> : path}
+      </svg>
+    );
+    const ICONS = {
+      home: 'M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z M9 22V12h6v10',
+      leaves: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z',
+      payroll: 'M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6',
+      attendance: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
+      profile: 'M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2 M12 11a4 4 0 100-8 4 4 0 000 8z',
+      team: 'M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2 M23 21v-2a4 4 0 00-3-3.87 M16 3.13a4 4 0 010 7.75',
+      download: 'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4 M7 10l5 5 5-5 M12 15V3',
+      close: 'M18 6L6 18M6 6l12 12',
+      plus: 'M12 5v14M5 12h14',
+      check: 'M20 6L9 17l-5-5',
+      mic: null,
+      bot: 'M12 2a2 2 0 012 2v1a7 7 0 017 7 7 7 0 01-7 7v1a2 2 0 01-2 2 2 2 0 01-2-2v-1a7 7 0 01-7-7 7 7 0 017-7V4a2 2 0 012-2z',
+      chevronR: 'M9 18l6-6-6-6',
+      logout: 'M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4 M16 17l5-5-5-5 M21 12H9',
+    };
+
+    function NavIcon({ name, size = 16 }) {
+      if (name === 'mic') return (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" stroke="none">
+          <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" />
+          <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" />
+        </svg>
+      );
+      return <Icon path={ICONS[name]} size={size} />;
+    }
+
+    // ── Status Badge ──────────────────────────────────────────────────────────
+    function StatusBadge({ status }) {
+      const map = {
+        Approved: 'badge-green', Pending: 'badge-yellow', Rejected: 'badge-red',
+        Released: 'badge-green', Late: 'badge-yellow', Present: 'badge-green',
+        'On Leave': 'badge-blue', Offline: 'badge-gray', Online: 'badge-green', Away: 'badge-yellow',
+      };
+      return <span className={`badge ${map[status] || 'badge-gray'}`}>{status}</span>;
+    }
+
+    // ── Sidebar ───────────────────────────────────────────────────────────────
+    const NAV_ITEMS = [
+      { id: 'dashboard', label: 'Dashboard', icon: 'home' },
+      { id: 'leaves', label: 'Leaves', icon: 'leaves' },
+      { id: 'payroll', label: 'Payroll', icon: 'payroll' },
+      { id: 'attendance', label: 'Attendance', icon: 'attendance' },
+      { id: 'profile', label: 'My Profile', icon: 'profile' },
+      { id: 'team', label: 'Team', icon: 'team' },
+    ];
+    function Sidebar({ currentPage, navigate }) {
+      return (
+        <aside className="sidebar">
+          <div className="sidebar-logo">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+              <rect width="28" height="28" rx="7" fill="#111" />
+              <text x="14" y="20" textAnchor="middle" fill="#fff" fontSize="14" fontWeight="700" fontFamily="Inter,sans-serif">H</text>
+            </svg>
+            <div>
+              <div className="sidebar-logo-text">HRPortal</div>
+              <div className="sidebar-logo-sub">Workspace 2026</div>
+            </div>
+          </div>
+          <nav className="sidebar-nav">
+            <div className="sidebar-section-label">Main</div>
+            {NAV_ITEMS.slice(0, 4).map(item => (
+              <button key={item.id} className={`nav-item ${currentPage === item.id ? 'active' : ''}`} onClick={() => navigate(item.id)}>
+                <NavIcon name={item.icon} size={16} />
+                {item.label}
+              </button>
+            ))}
+            <div className="sidebar-section-label">Personal</div>
+            {NAV_ITEMS.slice(4).map(item => (
+              <button key={item.id} className={`nav-item ${currentPage === item.id ? 'active' : ''}`} onClick={() => navigate(item.id)}>
+                <NavIcon name={item.icon} size={16} />
+                {item.label}
+              </button>
+            ))}
+          </nav>
+          <div className="sidebar-user">
+            <div className="user-avatar">{EMPLOYEE.initials}</div>
+            <div>
+              <div className="user-name">{EMPLOYEE.name.split(' ')[0]}</div>
+              <div className="user-role">{EMPLOYEE.role.split(' ')[0]} Eng.</div>
+            </div>
+          </div>
+        </aside>
+      );
+    }
+
+    // ── Top Bar ───────────────────────────────────────────────────────────────
+    function Topbar({ page }) {
+      const labels = { dashboard: 'Dashboard', leaves: 'Leave Management', payroll: 'Payroll', attendance: 'Attendance', profile: 'My Profile', team: 'My Team' };
+      const today = new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+      return (
+        <div className="topbar">
+          <div className="topbar-title">{labels[page]}</div>
+          <div className="topbar-actions">
+            <span className="topbar-date">{today}</span>
+            <span><span className="topbar-badge"></span></span>
+          </div>
+        </div>
+      );
+    }
+
+    // ── Pages ─────────────────────────────────────────────────────────────────
+
+    /* Dashboard */
+    function DashboardPage({ navigate }) {
+      return (
+        <div className="page-content">
+          <div className="page-header">
+            <div className="page-title">Good morning, {EMPLOYEE.name.split(' ')[0]} 👋</div>
+            <div className="page-subtitle">Here's what's happening with your HR today.</div>
+          </div>
+
+          {ANNOUNCEMENTS.map(a => (
+            <div key={a.id} className="announcement" style={{ marginBottom: 10 }}>
+              <div className="announcement-text">{a.title}</div>
+              <span className="announcement-badge">{a.tag}</span>
+            </div>
+          ))}
+
+          <div style={{ marginTop: 24, marginBottom: 8 }} className="section-title">At a Glance</div>
+          <div className="kpi-grid">
+            <div className="card">
+              <div className="card-title">Casual Leave Left</div>
+              <div className="card-value">8</div>
+              <div className="card-sub">of 12 days</div>
+            </div>
+            <div className="card">
+              <div className="card-title">Attendance (May)</div>
+              <div className="card-value">96%</div>
+              <div className="card-sub">22 of 23 days</div>
+            </div>
+            <div className="card">
+              <div className="card-title">Last Payslip</div>
+              <div className="card-value">₹96,800</div>
+              <div className="card-sub">April 2026</div>
+            </div>
+            <div className="card">
+              <div className="card-title">Pending Leaves</div>
+              <div className="card-value">1</div>
+              <div className="card-sub">Awaiting approval</div>
+            </div>
+          </div>
+
+          <div className="section-title">Quick Actions</div>
+          <div className="quick-actions">
+            {[['Apply Leave', 'leaves'], ['View Payslip', 'payroll'], ['My Attendance', 'attendance'], ['My Profile', 'profile']].map(([label, page]) => (
+              <div key={label} className="quick-action" onClick={() => navigate(page)}>
+                <Icon path={ICONS[page === 'attendance' ? 'attendance' : page === 'payroll' ? 'payroll' : page === 'leaves' ? 'leaves' : 'profile']} size={15} />
+                {label}
+              </div>
+            ))}
+          </div>
+
+          <div className="table-card">
+            <div className="table-header"><div className="table-header-title">Recent Leave Requests</div></div>
+            <table>
+              <thead><tr><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th></tr></thead>
+              <tbody>
+                {LEAVE_HISTORY.slice(0, 3).map(l => (
+                  <tr key={l.id}>
+                    <td>{l.type}</td>
+                    <td>{l.from}</td><td>{l.to}</td>
+                    <td>{l.days}</td>
+                    <td><StatusBadge status={l.status} /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      );
+    }
+
+    /* Leaves */
+    function LeavesPage() {
+      const [tab, setTab] = useState('balance');
+      const [showModal, setShowModal] = useState(false);
+      const [form, setForm] = useState({ type: 'Casual Leave', from: '', to: '', reason: '' });
+      const [submitted, setSubmitted] = useState(false);
+      const agent = useAgent();
+
+      // Listen for agent commands
+      useEffect(() => {
+        if (agent.pendingAction?.page === 'leaves') {
+          if (agent.pendingAction.action === 'open_apply_modal') {
+            setShowModal(true);
+            if (agent.pendingAction.data) {
+              setForm(f => ({ ...f, ...agent.pendingAction.data }));
+            }
+            agent.clearAction();
+          }
+        }
+      }, [agent.pendingAction]);
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        setSubmitted(true);
+        setTimeout(() => { setShowModal(false); setSubmitted(false); setForm({ type: 'Casual Leave', from: '', to: '', reason: '' }); }, 1200);
+      };
+
+      return (
+        <div className="page-content">
+          <div className="page-header" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+            <div>
+              <div className="page-title">Leave Management</div>
+              <div className="page-subtitle">Track, apply, and manage your leaves.</div>
+            </div>
+            <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+              <Icon path={ICONS.plus} size={14} /> Apply Leave
+            </button>
+          </div>
+
+          <div className="tabs">
+            {['balance', 'history'].map(t => <button key={t} className={`tab ${tab === t ? 'active' : ''}`} onClick={() => setTab(t)}>{t === 'balance' ? 'Leave Balance' : 'Leave History'}</button>)}
+          </div>
+
+          {tab === 'balance' && (
+            <div>
+              <div className="kpi-grid" style={{ gridTemplateColumns: 'repeat(auto-fill,minmax(200px,1fr))' }}>
+                {LEAVE_BALANCE.map(lb => (
+                  <div key={lb.type} className="card">
+                    <div className="card-title">{lb.type}</div>
+                    <div className="card-value">{lb.total - lb.used}</div>
+                    <div className="card-sub">{lb.used} used · {lb.total} total</div>
+                    <div style={{ marginTop: 10, height: 4, background: '#f0f0f0', borderRadius: 99 }}>
+                      <div style={{ width: `${(lb.used / lb.total) * 100}%`, height: '100%', background: '#111', borderRadius: 99 }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ marginTop: 20 }} className="section-title">May 2026 — Leave Snapshot</div>
+              <div className="leave-strip">
+                {Array.from({ length: 31 }, (_, i) => {
+                  const d = i + 1;
+                  const cls = [4, 10, 11].includes(d) ? 'taken' : [26, 27, 28, 29, 30].includes(d) ? 'pending' : d === 25 ? 'today' : '';
+                  return <div key={d} className={`leave-day ${cls}`}>{d}</div>;
+                })}
+              </div>
+              <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                {[['#111', '#fff', 'Taken'], ['#fef9c3', '#92400e', 'Pending'], ['#fff', '#111', 'Today (border)']].map(([bg, color, label]) => (
+                  <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#666' }}>
+                    <div style={{ width: 12, height: 12, borderRadius: 3, background: bg, border: `1px solid ${color === '#111' ? '#ddd' : '#111'}` }} />
+                    {label}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {tab === 'history' && (
+            <div className="table-card">
+              <table>
+                <thead><tr><th>ID</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Reason</th><th>Status</th></tr></thead>
+                <tbody>
+                  {LEAVE_HISTORY.map(l => (
+                    <tr key={l.id}>
+                      <td style={{ color: '#aaa', fontFamily: 'monospace', fontSize: 12 }}>{l.id}</td>
+                      <td>{l.type}</td><td>{l.from}</td><td>{l.to}</td>
+                      <td>{l.days}</td><td style={{ color: '#888' }}>{l.reason}</td>
+                      <td><StatusBadge status={l.status} /></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {showModal && (
+            <div className="modal-backdrop" onClick={e => e.target === e.currentTarget && setShowModal(false)}>
+              <div className="modal">
+                <div className="modal-header">
+                  <div className="modal-title">Apply for Leave</div>
+                  <button className="btn btn-ghost btn-sm" onClick={() => setShowModal(false)}><Icon path={ICONS.close} size={16} /></button>
+                </div>
+                <form onSubmit={handleSubmit}>
+                  <div className="modal-body">
+                    <div className="form-group">
+                      <label className="form-label">Leave Type</label>
+                      <select className="form-select" value={form.type} onChange={e => setForm({ ...form, type: e.target.value })}>
+                        {['Casual Leave', 'Sick Leave', 'Earned Leave', 'Comp-off'].map(t => <option key={t}>{t}</option>)}
+                      </select>
+                    </div>
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label className="form-label">From Date</label>
+                        <input className="form-input" type="date" value={form.from} onChange={e => setForm({ ...form, from: e.target.value })} required />
+                      </div>
+                      <div className="form-group">
+                        <label className="form-label">To Date</label>
+                        <input className="form-input" type="date" value={form.to} onChange={e => setForm({ ...form, to: e.target.value })} required />
+                      </div>
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Reason</label>
+                      <textarea className="form-textarea" value={form.reason} onChange={e => setForm({ ...form, reason: e.target.value })} placeholder="Briefly describe the reason for leave..." required />
+                    </div>
+                  </div>
+                  <div className="modal-footer">
+                    <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
+                    <button type="submit" className="btn btn-primary">
+                      {submitted ? <><Icon path={ICONS.check} size={14} /> Submitted!</> : 'Submit Request'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    /* Payroll */
+    function PayrollPage() {
+      const [selectedMonth, setSelectedMonth] = useState('April 2026');
+      const selected = PAYSLIPS.find(p => p.month === selectedMonth) || PAYSLIPS[0];
+      return (
+        <div className="page-content">
+          <div className="page-header">
+            <div className="page-title">Payroll</div>
+            <div className="page-subtitle">View payslips and salary breakdown.</div>
+          </div>
+
+          <div className="kpi-grid" style={{ gridTemplateColumns: 'repeat(3,1fr)', marginBottom: 28 }}>
+            <div className="card"><div className="card-title">Gross (April)</div><div className="card-value">₹1,18,000</div><div className="card-sub">CTC component</div></div>
+            <div className="card"><div className="card-title">Deductions</div><div className="card-value">₹21,200</div><div className="card-sub">PF + Tax + PT</div></div>
+            <div className="card"><div className="card-title">Net Pay</div><div className="card-value">₹96,800</div><div className="card-sub">In-hand</div></div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 20 }}>
+            <div>
+              <div className="section-title">Payslips</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {PAYSLIPS.map(p => (
+                  <div key={p.month} onClick={() => setSelectedMonth(p.month)}
+                    style={{ padding: '12px 16px', background: '#fff', border: `1px solid ${selectedMonth === p.month ? '#111' : '#e8e8e8'}`, borderRadius: 8, cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', transition: 'all .15s' }}>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 500, color: '#111' }}>{p.month}</div>
+                      <div style={{ fontSize: 12, color: '#aaa', marginTop: 2 }}>{p.net} net pay</div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <StatusBadge status={p.status} />
+                      <button className="btn btn-ghost btn-sm" onClick={e => { e.stopPropagation(); }}><Icon path={ICONS.download} size={14} /></button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div>
+              <div className="section-title">Breakdown — {selectedMonth}</div>
+              <div className="table-card">
+                <table>
+                  <thead><tr><th>Component</th><th>Amount</th><th>Type</th></tr></thead>
+                  <tbody>
+                    {PAYROLL_BREAKDOWN.map(r => (
+                      <tr key={r.component}>
+                        <td>{r.component}</td>
+                        <td style={{ fontWeight: 500, fontVariantNumeric: 'tabular-nums' }}>{r.amount}</td>
+                        <td><span className={`badge ${r.type === 'earning' ? 'badge-green' : 'badge-red'}`}>{r.type}</span></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    /* Attendance */
+    function AttendancePage() {
+      return (
+        <div className="page-content">
+          <div className="page-header">
+            <div className="page-title">Attendance</div>
+            <div className="page-subtitle">Your attendance log for May 2026.</div>
+          </div>
+          <div className="kpi-grid" style={{ gridTemplateColumns: 'repeat(4,1fr)', marginBottom: 28 }}>
+            {[['Present', '22', 'days this month'], ['Absent', '1', 'day(s)'], ['Late', '1', 'arrival(s)'], ['Avg Hours', '9h 21m', 'per day']].map(([label, val, sub]) => (
+              <div key={label} className="card">
+                <div className="card-title">{label}</div>
+                <div className="card-value">{val}</div>
+                <div className="card-sub">{sub}</div>
+              </div>
+            ))}
+          </div>
+          <div className="table-card">
+            <div className="table-header"><div className="table-header-title">Daily Log</div></div>
+            <table>
+              <thead><tr><th>Date</th><th>Check In</th><th>Check Out</th><th>Hours</th><th>Status</th></tr></thead>
+              <tbody>
+                {ATTENDANCE.map(a => (
+                  <tr key={a.date}>
+                    <td style={{ fontWeight: 500 }}>{a.date}</td>
+                    <td style={{ fontVariantNumeric: 'tabular-nums', color: '#555' }}>{a.checkIn}</td>
+                    <td style={{ fontVariantNumeric: 'tabular-nums', color: '#555' }}>{a.checkOut}</td>
+                    <td style={{ fontVariantNumeric: 'tabular-nums' }}>{a.hours}</td>
+                    <td><StatusBadge status={a.status} /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      );
+    }
+
+    /* Profile */
+    function ProfilePage() {
+      const [editing, setEditing] = useState(false);
+      return (
+        <div className="page-content">
+          <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div>
+              <div className="page-title">My Profile</div>
+              <div className="page-subtitle">Your employee information and settings.</div>
+            </div>
+            <button className="btn btn-secondary" onClick={() => setEditing(e => !e)}>{editing ? 'Cancel' : 'Edit Profile'}</button>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '240px 1fr', gap: 20 }}>
+            <div>
+              <div className="card" style={{ textAlign: 'center', padding: '28px 20px' }}>
+                <div style={{ width: 72, height: 72, borderRadius: '50%', background: '#111', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, fontWeight: 700, margin: '0 auto 14px' }}>{EMPLOYEE.initials}</div>
+                <div style={{ fontSize: 16, fontWeight: 600, color: '#111' }}>{EMPLOYEE.name}</div>
+                <div style={{ fontSize: 13, color: '#888', marginTop: 4 }}>{EMPLOYEE.role}</div>
+                <div style={{ marginTop: 8 }}><span className="badge badge-green">Active</span></div>
+                <div className="divider" />
+                <div style={{ fontSize: 12, color: '#aaa' }}>Employee ID</div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: '#111', marginTop: 2, fontFamily: 'monospace' }}>{EMPLOYEE.id}</div>
+                <div style={{ fontSize: 12, color: '#aaa', marginTop: 10 }}>Joined</div>
+                <div style={{ fontSize: 13, fontWeight: 500, color: '#111', marginTop: 2 }}>{EMPLOYEE.joinDate}</div>
+              </div>
+            </div>
+            <div>
+              <div className="card">
+                <div className="section-title">Personal Information</div>
+                {editing ? (
+                  <div>
+                    <div className="form-row">
+                      <div className="form-group"><label className="form-label">Email</label><input className="form-input" defaultValue={EMPLOYEE.email} /></div>
+                      <div className="form-group"><label className="form-label">Phone</label><input className="form-input" defaultValue={EMPLOYEE.phone} /></div>
+                    </div>
+                    <div className="form-group"><label className="form-label">Location</label><input className="form-input" defaultValue={EMPLOYEE.location} /></div>
+                    <button className="btn btn-primary" onClick={() => setEditing(false)}>Save Changes</button>
+                  </div>
+                ) : (
+                  <div className="info-grid">
+                    {[['Full Name', EMPLOYEE.name], ['Email', EMPLOYEE.email], ['Phone', EMPLOYEE.phone], ['Location', EMPLOYEE.location], ['Department', EMPLOYEE.department], ['Manager', EMPLOYEE.manager], ['Employment Type', EMPLOYEE.employmentType], ['Date of Joining', EMPLOYEE.joinDate]].map(([label, val]) => (
+                      <div key={label} className="info-item">
+                        <div className="info-label">{label}</div>
+                        <div className="info-value">{val}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    /* Team */
+    function TeamPage() {
+      return (
+        <div className="page-content">
+          <div className="page-header">
+            <div className="page-title">My Team</div>
+            <div className="page-subtitle">Engineering team members.</div>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))', gap: 14 }}>
+            {TEAM.map(m => (
+              <div key={m.name} className="card" style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <div style={{ width: 42, height: 42, borderRadius: '50%', background: '#111', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 600, flexShrink: 0 }}>{m.initials}</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: '#111', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{m.name}</div>
+                  <div style={{ fontSize: 12, color: '#888', marginTop: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{m.role}</div>
+                  <div style={{ marginTop: 5 }}><StatusBadge status={m.status} /></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    // ── Agent Dialog ──────────────────────────────────────────────────────────
+    function AgentDialog({ navigate }) {
+      const [open, setOpen] = useState(false);
+      const [recording, setRecording] = useState(false);
+      const [toggled, setToggled] = useState(false);
+      const [thinking, setThinking] = useState(false);
+      const [connected, setConnected] = useState(false);
+      const [transcript, setTranscript] = useState('Ready for voice commands…');
+      const [logs, setLogs] = useState([{ cls: 'log-system', text: '> [System] Ready for voice commands...' }]);
+      const [statusText, setStatusText] = useState('Click or hold to speak');
+      const logsRef = useRef(null);
+      const recognitionRef = useRef(null);
+      const holdTimerRef = useRef(null);
+      const isHoldRef = useRef(false);
+      const agent = useAgent();
+
+      const addLog = useCallback((cls, text) => {
+        setLogs(prev => [...prev, { cls, text }]);
+        setTimeout(() => { if (logsRef.current) logsRef.current.scrollTop = logsRef.current.scrollHeight; }, 50);
+      }, []);
+
+      // Simulate backend connection when panel opens
+      useEffect(() => {
+        if (open && !connected) {
+          addLog('log-system', '> [System] Connecting to agent backend...');
+          setTimeout(() => { setConnected(true); addLog('log-ack', '> [System] Connected ✓ — WebSocket ready'); }, 900);
+        }
+      }, [open]);
+
+      // Process voice command (mock agent logic — replace with real backend call)
+      const processCommand = useCallback((text) => {
+        setThinking(true);
+        setStatusText('Thinking…');
+        addLog('log-step', `> [Agent] Processing: "${text}"`);
+
+        setTimeout(() => {
+          setThinking(false);
+          const lower = text.toLowerCase();
+
+          if (/leave|leaves|apply leave|time off/i.test(lower)) {
+            addLog('log-nav', '> [Action] navigate → /leaves');
+            addLog('log-result', '> [Agent] Navigating to Leave Management');
+            navigate('leaves');
+            agent.setPendingAction(null);
+            setStatusText('Done! Navigated to Leaves.');
+          } else if (/payroll|payslip|salary|pay slip/i.test(lower)) {
+            addLog('log-nav', '> [Action] navigate → /payroll');
+            addLog('log-result', '> [Agent] Opening Payroll page');
+            navigate('payroll');
+            setStatusText('Done! Opened Payroll.');
+          } else if (/attendance|check in|check-in|timing/i.test(lower)) {
+            addLog('log-nav', '> [Action] navigate → /attendance');
+            addLog('log-result', '> [Agent] Navigating to Attendance');
+            navigate('attendance');
+            setStatusText('Done! Opened Attendance.');
+          } else if (/profile|my profile|personal info/i.test(lower)) {
+            addLog('log-nav', '> [Action] navigate → /profile');
+            addLog('log-result', '> [Agent] Opening My Profile');
+            navigate('profile');
+            setStatusText('Done! Opened Profile.');
+          } else if (/team|colleagues|coworkers/i.test(lower)) {
+            addLog('log-nav', '> [Action] navigate → /team');
+            addLog('log-result', '> [Agent] Opening Team page');
+            navigate('team');
+            setStatusText('Done! Opened Team.');
+          } else if (/dashboard|home/i.test(lower)) {
+            addLog('log-nav', '> [Action] navigate → /dashboard');
+            addLog('log-result', '> [Agent] Going to Dashboard');
+            navigate('dashboard');
+            setStatusText('Done! Opened Dashboard.');
+          } else {
+            addLog('log-error', `> [Agent] Unknown command: "${text}"`);
+            setStatusText('Command not recognized.');
+          }
+          setTimeout(() => setStatusText('Click or hold to speak'), 3000);
+        }, 1200);
+      }, [navigate, agent, addLog]);
+
+      // Speech Recognition setup
+      const startRecognition = useCallback(() => {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+          addLog('log-error', '> [Error] Speech API not supported in this browser');
+          return;
+        }
+        const rec = new SpeechRecognition();
+        rec.continuous = false;
+        rec.interimResults = true;
+        rec.lang = 'en-IN';
+        recognitionRef.current = rec;
+
+        rec.onresult = (e) => {
+          const t = Array.from(e.results).map(r => r[0].transcript).join('');
+          setTranscript(t);
+        };
+        rec.onend = () => {
+          setRecording(false); setToggled(false);
+          setStatusText('Processing…');
+          if (recognitionRef.current?._finalTranscript) {
+            processCommand(recognitionRef.current._finalTranscript);
+          }
+        };
+        rec.onfinalresult = (e) => {
+          recognitionRef.current._finalTranscript = Array.from(e.results).map(r => r[0].transcript).join('');
+        };
+        rec.addEventListener('result', (e) => {
+          const last = e.results[e.results.length - 1];
+          if (last.isFinal) recognitionRef.current._finalTranscript = last[0].transcript;
+        });
+        rec.start();
+      }, [addLog, processCommand]);
+
+      const stopRecognition = useCallback(() => {
+        recognitionRef.current?.stop();
+      }, []);
+
+      // Click toggle
+      const handleMicClick = useCallback(() => {
+        if (recording && toggled) { stopRecognition(); setRecording(false); setToggled(false); setStatusText('Click or hold to speak'); return; }
+        if (!recording) {
+          setRecording(true); setToggled(true);
+          setTranscript('Listening…');
+          setStatusText('Listening — click to stop');
+          addLog('log-ack', '> [Mic] Recording started (toggle)');
+          startRecognition();
+        }
+      }, [recording, toggled, startRecognition, stopRecognition, addLog]);
+
+      // Push-to-talk (hold)
+      const handleMicMouseDown = useCallback((e) => {
+        holdTimerRef.current = setTimeout(() => {
+          isHoldRef.current = true;
+          setRecording(true); setToggled(false);
+          setTranscript('Listening (hold)…');
+          setStatusText('Hold to talk — release to send');
+          addLog('log-ack', '> [Mic] Recording started (hold)');
+          startRecognition();
+        }, 200);
+      }, [startRecognition, addLog]);
+
+      const handleMicMouseUp = useCallback(() => {
+        clearTimeout(holdTimerRef.current);
+        if (isHoldRef.current) { isHoldRef.current = false; stopRecognition(); }
+      }, [stopRecognition]);
+
+      // Spacebar push-to-talk
+      useEffect(() => {
+        const down = (e) => { if (e.code === 'Space' && open && !recording) { e.preventDefault(); setRecording(true); setTranscript('Listening…'); setStatusText('Hold space…'); startRecognition(); } };
+        const up = (e) => { if (e.code === 'Space' && recording) { stopRecognition(); } };
+        window.addEventListener('keydown', down);
+        window.addEventListener('keyup', up);
+        return () => { window.removeEventListener('keydown', down); window.removeEventListener('keyup', up); };
+      }, [open, recording, startRecognition, stopRecognition]);
+
+      const micCls = `mic-button${recording ? thinking ? ' thinking' : toggled ? ' recording toggled' : ' recording' : ''}`;
+
+      return (
+        <>
+          {!open && <div className="agent-trigger-ripple" />}
+          <button className={`agent-trigger${open ? ' open' : ''}`} onClick={() => setOpen(o => !o)} title="Open Voice Agent">
+            {open
+              ? <Icon path={ICONS.close} size={20} stroke="#fff" />
+              : <svg width="22" height="22" viewBox="0 0 24 24" fill="white" stroke="none"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" /><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" /></svg>
+            }
+          </button>
+
+          <div className={`agent-panel${open ? '' : ' hidden'}`}>
+            <div className="agent-panel-header">
+              <span className="agent-panel-title">Voice Agent</span>
+              <div className={`agent-status-dot${connected ? ' connected' : ''}`} title={connected ? 'Connected' : 'Disconnected'} />
+              <button className="agent-close-btn" onClick={() => setOpen(false)}>
+                <Icon path={ICONS.close} size={14} stroke="#888" />
+              </button>
+            </div>
+            <div className="agent-panel-body">
+              <button
+                className={micCls}
+                onClick={handleMicClick}
+                onMouseDown={handleMicMouseDown}
+                onMouseUp={handleMicMouseUp}
+                onMouseLeave={handleMicMouseUp}
+                title="Click to toggle · Hold to push-to-talk"
+              >
+                <svg fill="white" height="32" viewBox="0 0 24 24" width="32">
+                  <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" />
+                  <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" />
+                </svg>
+              </button>
+              <div className="agent-status-text">{statusText}</div>
+              <div className="agent-hint">click = toggle · hold = push-to-talk · space = push-to-talk</div>
+              <div className={`agent-transcript${recording ? ' active' : ''}`}>{transcript}</div>
+              <div className="agent-logs" ref={logsRef}>
+                {logs.map((l, i) => <div key={i} className={l.cls}>{l.text}</div>)}
+              </div>
+            </div>
+          </div>
+        </>
+      );
+    }
+
+    // ── Root App ──────────────────────────────────────────────────────────────
+    function App() {
+      const [page, setPage] = useState('dashboard');
+      const [pendingAction, setPendingAction] = useState(null);
+
+      const navigate = useCallback((p) => setPage(p), []);
+      const clearAction = useCallback(() => setPendingAction(null), []);
+
+      const agentValue = { pendingAction, setPendingAction, clearAction };
+
+      const pages = { dashboard: <DashboardPage navigate={navigate} />, leaves: <LeavesPage />, payroll: <PayrollPage />, attendance: <AttendancePage />, profile: <ProfilePage />, team: <TeamPage /> };
+
+      return (
+        <AgentContext.Provider value={agentValue}>
+          <div className="app-shell">
+            <Sidebar currentPage={page} navigate={navigate} />
+            <div className="main-content">
+              <Topbar page={page} />
+              {pages[page]}
+            </div>
+            <AgentDialog navigate={navigate} />
+          </div>
+        </AgentContext.Provider>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,42 @@
+.fab {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 1000;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-full);
+  background: var(--color-accent);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-lg);
+  transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+  border: none;
+  cursor: pointer;
+}
+
+.fab:hover {
+  background: var(--color-accent-hover);
+  transform: scale(1.05);
+}
+
+.fab:active {
+  transform: scale(0.95);
+}
+
+.fabOpen {
+  background: #333333;
+}
+
+.fabRecording {
+  animation: pulse 1.4s ease-in-out infinite;
+  box-shadow: 0 0 0 0 rgba(17,17,17,0.4);
+}
+
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(17,17,17,0.4); }
+  70%  { box-shadow: 0 0 0 12px rgba(17,17,17,0); }
+  100% { box-shadow: 0 0 0 0 rgba(17,17,17,0); }
+}
