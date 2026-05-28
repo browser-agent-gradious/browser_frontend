@@ -258,6 +258,70 @@ export function useAgentSocket() {
                 addLog('result', payload.text)
                 break
 
+            /**
+             * click — click a DOM element by CSS selector.
+             * No visual dot, just a direct programmatic click.
+             * Used for confirmations / form submits after the user has seen the dot.
+             */
+            case 'click': {
+                const { selector } = payload
+                setTimeout(() => {
+                    try {
+                        const el = document.querySelector(selector)
+                        if (el && typeof el.click === 'function') {
+                            el.click()
+                            addLog('ack', `Clicked: ${selector}`)
+                        } else {
+                            addLog('error', `Selector not found: ${selector}`)
+                        }
+                    } catch (err) {
+                        addLog('error', `click failed: ${err.message}`)
+                    }
+                }, 100)
+                break
+            }
+
+            /**
+             * click_dot — draw a red dot at (x, y) then perform the actual DOM click.
+             *
+             * Backend sends:
+             *   { action: "click_dot", payload: { x: 320, y: 180, label: "Submit", selector?: "#submit-btn" } }
+             *
+             * Steps:
+             *   1. Dispatch to ClickDot component → shows the red dot at (x, y)
+             *   2. After a short visual delay (300ms), attempt the DOM click:
+             *      a. If selector is provided, use querySelector
+             *      b. Otherwise use document.elementFromPoint(x, y)
+             */
+            case 'click_dot': {
+                const { x, y, selector, label } = payload
+
+                // Step 1: show the dot (ClickDot component reads pendingAction)
+                dispatchAction({ type: 'click_dot', payload: { x, y, label } })
+
+                // Step 2: perform the actual DOM click after dot appears
+                setTimeout(() => {
+                    try {
+                        let el = null
+                        if (selector) {
+                            el = document.querySelector(selector)
+                        }
+                        if (!el) {
+                            el = document.elementFromPoint(x, y)
+                        }
+                        if (el && typeof el.click === 'function') {
+                            el.click()
+                            addLog('ack', `Clicked: ${label || selector || `(${x}, ${y})`}`)
+                        } else {
+                            addLog('error', `No element found at (${x}, ${y})`)
+                        }
+                    } catch (err) {
+                        addLog('error', `Click failed: ${err.message}`)
+                    }
+                }, 300)
+                break
+            }
+            
             default:
                 // fill_form, open_modal, click, etc. → dispatched to page via AgentContext
                 dispatchAction({ type: action, payload })

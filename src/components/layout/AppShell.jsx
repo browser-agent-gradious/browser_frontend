@@ -8,17 +8,27 @@ import PayrollPage from '../../pages/PayrollPage.jsx'
 import ProfilePage from '../../pages/ProfilePage.jsx'
 import AgentButton from '../agent/AgentButton.jsx'
 import AgentDialog from '../agent/AgentDialog.jsx'
+import ClickDot from '../agent/ClickDot.jsx'
 
 /**
  * AppShell — the permanent scaffold.
  * 
  * Rendered inside BrowserRouter so useNavigate() works in child hooks.
+ * Everything outside <Routes> never unmounts on navigation.
  *
  * Structure:
  * - Navbar          — sticky, never unmounts
  * - Routes          — only this subtree swaps on navigation
  * - AgentDialog     — outside Routes, never unmounts → state preserved
  * - AgentButton     — FAB, always visible
+ * - ClickDot         — global click visualizer, always visible, pointerEvents: none
+ * 
+ * Render order (bottom → top by z-index):
+ * - Navbar (z: 100)
+ * - Routes → page content
+ * - AgentDialog (z: 999)
+ * - AgentButton (z: 1000)
+ * - ClickDot (z: 999999) — topmost, pointerEvents: none
  */
 export default function AppShell() {
     return (
@@ -36,6 +46,9 @@ export default function AppShell() {
             {/* Agent components are OUTSIDE <Routes> — they never unmount during navigation */}
             <AgentDialog />
             <AgentButton />
+
+            {/* Visual click debugger — renders red dot wherever agent clicks */}
+            <ClickDot />
         </>
     )
 }
