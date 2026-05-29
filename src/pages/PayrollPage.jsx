@@ -3,6 +3,7 @@ import PageLayout from '../components/layout/PageLayout.jsx'
 import StatCard from '../components/ui/StatCard.jsx'
 import Badge from '../components/ui/Badge.jsx'
 import Card from '../components/ui/Card.jsx'
+import { useAgentAction } from '../context/AgentContext.jsx'
 import { payrollData } from '../data/payrollData.js'
 import styles from './PayrollPage.module.css'
 
@@ -40,6 +41,15 @@ export default function PayrollPage() {
         },
     ]
 
+    // Agent action: update_payroll_month
+    // Backend sends: { type: 'update_payroll_month', payload: { month: 'September 2024' } }
+    // This allows the agent to change the month view based on user queries like "Show me my payroll for September."
+    useAgentAction('update_payroll_month', (payload) => {
+        if (payrollData[payload.month]) {
+            setSelectedMonth(payload.month)
+        }
+    })
+
     return (
         <PageLayout
             title="Payroll"
@@ -68,9 +78,10 @@ export default function PayrollPage() {
                         className={styles.dropdown}
                         value={selectedMonth}
                         onChange={(e) => setSelectedMonth(e.target.value)}
+                        id='payroll-month-select'
                     >
                         {months.map((month) => (
-                            <option key={month} value={month}>
+                            <option key={month} value={month} id={`payroll-month-option-${month.toLowerCase().split(' ')[0]}`}>
                                 {month}
                             </option>
                         ))}

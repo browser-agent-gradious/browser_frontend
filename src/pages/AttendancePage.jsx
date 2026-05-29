@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import PageLayout from '../components/layout/PageLayout.jsx'
 import StatCard from '../components/ui/StatCard.jsx'
+import { useAgentAction } from '../context/AgentContext.jsx'
 import { attendanceSummary, attendanceData } from '../data/attendanceData.js'
 import styles from './AttendancePage.module.css'
 import DataTable from '../components/ui/DataTable.jsx'
@@ -19,37 +20,37 @@ export default function AttendancePage() {
     const currentLogs = currentMonth.logs
 
     const s = {
-    present: currentLogs.filter(
-        (log) => log.status === 'Present'
-    ).length,
+        present: currentLogs.filter(
+            (log) => log.status === 'Present'
+        ).length,
 
-    leave: currentLogs.filter(
-        (log) => log.status.includes('Leave')
-    ).length,
+        leave: currentLogs.filter(
+            (log) => log.status.includes('Leave')
+        ).length,
 
-    absent: currentLogs.filter(
-        (log) => log.status === 'Absent'
-    ).length,
+        absent: currentLogs.filter(
+            (log) => log.status === 'Absent'
+        ).length,
     }
     const summaryStats = [
-    {
-        label: 'Present',
-        value: s.present,
-        className: styles.presentCard,
-    },
+        {
+            label: 'Present',
+            value: s.present,
+            className: styles.presentCard,
+        },
 
-    {
-        label: 'Absent',
-        value: s.absent,
-        className: styles.absentCard,
-    },
+        {
+            label: 'Absent',
+            value: s.absent,
+            className: styles.absentCard,
+        },
 
-    {
-        label: 'Leave',
-        value: s.leave,
-        className: styles.leaveCard,
-    },
-]
+        {
+            label: 'Leave',
+            value: s.leave,
+            className: styles.leaveCard,
+        },
+    ]
     const renderCalendarDays = () => {
 
         const days = []
@@ -85,6 +86,15 @@ export default function AttendancePage() {
         return days
     }
 
+    // Agent action: update_attendance_month
+    // Backend sends: { type: 'update_attendance_month', payload: { month: 'September 2024' } }
+    // This allows the agent to change the month view based on user queries like "Show me my attendance for September."
+    useAgentAction('update_attendance_month', (payload) => {
+        if (attendanceData[payload.month]) {
+            setSelectedMonth(payload.month)
+        }
+    })
+
     return (
         <PageLayout
             title="Attendance"
@@ -117,9 +127,10 @@ export default function AttendancePage() {
                         className={styles.dropdown}
                         value={selectedMonth}
                         onChange={(e) => setSelectedMonth(e.target.value)}
+                        id='attendance-month-select'
                     >
                         {months.map((month) => (
-                            <option key={month} value={month}>
+                            <option key={month} value={month} id={`attendance-month-option-${month.toLowerCase().split(' ')[0]}`}>
                                 {month}
                             </option>
                         ))}
@@ -146,46 +157,46 @@ export default function AttendancePage() {
             </div>
             <section className={styles.logsSection}>
 
-    <h2 className={styles.logsTitle}>
-        Attendance Logs
-    </h2>
+                <h2 className={styles.logsTitle}>
+                    Attendance Logs
+                </h2>
 
-    <DataTable
-        columns={[
-            { key: 'date', label: 'Date' },
-            { key: 'checkIn', label: 'Check In' },
-            { key: 'checkOut', label: 'Check Out' },
-            { key: 'hours', label: 'Hours' },
-            {
-                key: 'status',
-                label: 'Status',
-                render: (v) => {
+                <DataTable
+                    columns={[
+                        { key: 'date', label: 'Date' },
+                        { key: 'checkIn', label: 'Check In' },
+                        { key: 'checkOut', label: 'Check Out' },
+                        { key: 'hours', label: 'Hours' },
+                        {
+                            key: 'status',
+                            label: 'Status',
+                            render: (v) => {
 
-                    const variantMap = {
-                        Present: 'success',
+                                const variantMap = {
+                                    Present: 'success',
 
-                        'Sick Leave': 'warning',
+                                    'Sick Leave': 'warning',
 
-                        'Casual Leave': 'info',
+                                    'Casual Leave': 'info',
 
-                        'Vacation Leave': 'info',
+                                    'Vacation Leave': 'info',
 
-                        Absent: 'error',
-                    }
+                                    Absent: 'error',
+                                }
 
-                    return (
-                        <Badge variant={variantMap[v] || 'default'}>
-                            {v}
-                        </Badge>
-                    )
-                },
-            },
-        ]}
-        rows={currentMonth.logs}
-        emptyText="No attendance logs."
-    />
+                                return (
+                                    <Badge variant={variantMap[v] || 'default'}>
+                                        {v}
+                                    </Badge>
+                                )
+                            },
+                        },
+                    ]}
+                    rows={currentMonth.logs}
+                    emptyText="No attendance logs."
+                />
 
-</section>
+            </section>
 
         </PageLayout>
     )
