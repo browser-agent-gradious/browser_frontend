@@ -113,7 +113,7 @@ export default function AttendancePage() {
                         Monthly View
                     </label>
 
-                    <select
+                    <select id="attendance-month-dropdown"
                         className={styles.dropdown}
                         value={selectedMonth}
                         onChange={(e) => setSelectedMonth(e.target.value)}
@@ -150,7 +150,7 @@ export default function AttendancePage() {
         Attendance Logs
     </h2>
 
-    <DataTable
+    <DataTable id="attendance-logs-table"
         columns={[
             { key: 'date', label: 'Date' },
             { key: 'checkIn', label: 'Check In' },

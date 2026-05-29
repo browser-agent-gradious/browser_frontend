@@ -64,7 +64,7 @@ export default function PayrollPage() {
                         Payroll Month
                     </label>
 
-                    <select
+                    <select     id="payroll-month-dropdown"
                         className={styles.dropdown}
                         value={selectedMonth}
                         onChange={(e) => setSelectedMonth(e.target.value)}
@@ -102,7 +102,7 @@ export default function PayrollPage() {
                             {currentPayroll.status}
                         </Badge>
 
-                        <button className={styles.downloadBtn}>
+                        <button id="download-payslip-button" className={styles.downloadBtn}>
                             Download
                         </button>
 
@@ -110,7 +110,7 @@ export default function PayrollPage() {
 
                 </div>
 
-                <table className={styles.table}>
+                <table id="payroll-breakdown-table" className={styles.table}>
 
                     <thead>
                         <tr>
