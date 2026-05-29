@@ -71,8 +71,19 @@ export default function LeavesPage() {
                     <StatCard
                         key={lb.type}
                         label={lb.type}
-                        value={lb.remaining}
-                        sub={`${lb.used} used of ${lb.total}`}
+                        value={
+                            <>
+                                {lb.remaining}
+                                <span className={styles.remainingText}>
+                                    {' '}remaining
+                                </span>
+                            </>
+                        }
+                        sub={
+                            <>
+                                {lb.used} used of {lb.total}
+                            </>
+                        }
                     />
                 ))}
             </div>

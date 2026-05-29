@@ -1,14 +1,176 @@
 .statsGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: var(--space-4);
-    margin-bottom: var(--space-8);
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
 }
 
-.sectionTitle {
-    font-size: var(--text-lg);
-    font-weight: 700;
+.headerRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
     color: var(--color-text);
-    margin-bottom: var(--space-4);
-    letter-spacing: -0.01em;
+}
+
+.dropdown {
+    width: 220px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: 14px;
+    font-weight: 600;
+    outline: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+.dropdown:hover {
+    border-color: var(--color-primary);
+}
+
+.dropdown:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px rgba(59,130,246,0.12);
+}
+
+.calendarWrapper {
+    background: white;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.05);
+}
+
+.weekDays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 12px;
+}
+
+.weekDay {
+    text-align: center;
+    font-weight: 700;
+    padding: 10px 0;
+    color: #6b7280;
+}
+
+.calendarGrid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+}
+
+.emptyCell {
+    height: 90px;
+}
+
+.dayCell {
+    height: 90px;
+    border-radius: 14px;
+    background: #f3f4f6;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: 0.2s ease;
+}
+
+.dayCell:hover {
+    transform: translateY(-2px);
+}
+
+.dayNumber {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.status {
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 999px;
+    width: fit-content;
+}
+
+.Present {
+    background: rgba(34, 197, 94, 0.15);
+}
+
+.Present .status {
+    background: #22c55e;
+}
+
+.Absent {
+    background: rgba(239, 68, 68, 0.15);
+}
+
+.Absent .status {
+    background: #ef4444;
+}
+
+.Late {
+    background: rgba(245, 158, 11, 0.15);
+}
+
+.Late .status {
+    background: #f59e0b;
+}
+
+.HalfDay {
+    background: rgba(59, 130, 246, 0.15);
+}
+
+.HalfDay .status {
+    background: #3b82f6;
+}
+.logsSection {
+    margin-top: 32px;
+}
+
+.logsTitle {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 18px;
+    color: var(--color-text);
+}
+.Leave {
+    background: rgba(168, 85, 247, 0.15);
+}
+
+.Leave .status {
+    background: #a855f7;
+}
+.SickLeave {
+    background: rgba(239, 68, 68, 0.12);
+}
+
+.SickLeave .status {
+    background: #ef4444;
+}
+
+.CasualLeave {
+    background: rgba(59, 130, 246, 0.12);
+}
+
+.CasualLeave .status {
+    background: #3b82f6;
+}
+
+.VacationLeave {
+    background: rgba(168, 85, 247, 0.12);
+}
+
+.VacationLeave .status {
+    background: #a855f7;
 }

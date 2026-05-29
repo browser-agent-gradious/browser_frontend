@@ -72,3 +72,8 @@
     font-size: var(--text-base);
     font-weight: 500;
 }
+.remainingText {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+}
