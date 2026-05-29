@@ -37,7 +37,7 @@ export default function Dashboard() {
                 ))}
             </div>
 
-            <section className={styles.section}>
+            <section className={styles.section} id="recent-activity-section">
                 <h2 className={styles.sectionTitle}>Recent Activity</h2>
                 <DataTable
                     columns={activityColumns}

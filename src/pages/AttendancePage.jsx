@@ -123,11 +123,11 @@ export default function AttendancePage() {
                         Monthly View
                     </label>
 
-                    <select
+                    <select 
+                        id="attendance-month-dropdown"
                         className={styles.dropdown}
                         value={selectedMonth}
                         onChange={(e) => setSelectedMonth(e.target.value)}
-                        id='attendance-month-select'
                     >
                         {months.map((month) => (
                             <option key={month} value={month} id={`attendance-month-option-${month.toLowerCase().split(' ')[0]}`}>

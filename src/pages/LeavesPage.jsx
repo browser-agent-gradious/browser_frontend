@@ -62,7 +62,9 @@ export default function LeavesPage() {
             title="Leaves"
             subtitle="Manage and apply for your leaves."
             actions={
-                <Button onClick={() => setModalOpen(true)}>Apply Leave</Button>
+                <Button id="apply-leave-button" onClick={() => setModalOpen(true)}>
+                    Apply Leave
+                </Button>
             }
         >
             {/* Balance grid */}
@@ -89,7 +91,7 @@ export default function LeavesPage() {
             </div>
 
             {/* History */}
-            <section className={styles.section}>
+            <section className={styles.section} id="leave-history-section">
                 <h2 className={styles.sectionTitle}>Leave History</h2>
                 <DataTable columns={historyColumns} rows={leaveHistory} emptyText="No leave records." />
             </section>
@@ -107,7 +109,7 @@ export default function LeavesPage() {
                     <form onSubmit={handleSubmit} className={styles.form}>
                         <label className={styles.label}>
                             Leave Type
-                            <select
+                            <select id="leave-type-dropdown"
                                 name="type"
                                 value={form.type}
                                 onChange={handleChange}
@@ -124,7 +126,7 @@ export default function LeavesPage() {
                         <div className={styles.row}>
                             <label className={styles.label}>
                                 From
-                                <input
+                                <input     id="leave-from-date"
                                     type="date"
                                     name="from"
                                     value={form.from}
@@ -135,7 +137,7 @@ export default function LeavesPage() {
                             </label>
                             <label className={styles.label}>
                                 To
-                                <input
+                                <input    id="leave-to-date"
                                     type="date"
                                     name="to"
                                     value={form.to}
@@ -148,7 +150,7 @@ export default function LeavesPage() {
 
                         <label className={styles.label}>
                             Reason
-                            <textarea
+                            <textarea id="leave-reason-input"
                                 name="reason"
                                 value={form.reason}
                                 onChange={handleChange}
@@ -160,10 +162,10 @@ export default function LeavesPage() {
                         </label>
 
                         <div className={styles.formActions}>
-                            <Button type="button" variant="secondary" onClick={() => setModalOpen(false)}>
+                            <Button id="cancel-leave-button" type="button" variant="secondary" onClick={() => setModalOpen(false)}>
                                 Cancel
                             </Button>
-                            <Button type="submit">Submit Request</Button>
+                            <Button id="submit-leave-button" type="submit">Submit Request</Button>
                         </div>
                     </form>
                 )}
