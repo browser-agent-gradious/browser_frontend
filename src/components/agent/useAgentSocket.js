@@ -285,7 +285,7 @@ export function useAgentSocket() {
              * click_dot — draw a red dot at (x, y) then perform the actual DOM click.
              *
              * Backend sends:
-             *   { action: "click_dot", payload: { x: 320, y: 180, label: "Submit", selector?: "#submit-btn" } }
+             *   { action: "click_dot", payload: { label: "Submit", selector?: "#submit-btn" } }
              *
              * Steps:
              *   1. Dispatch to ClickDot component → shows the red dot at (x, y)
@@ -294,10 +294,10 @@ export function useAgentSocket() {
              *      b. Otherwise use document.elementFromPoint(x, y)
              */
             case 'click_dot': {
-                const { x, y, selector, label } = payload
+                const { selector, label } = payload
 
                 // Step 1: show the dot (ClickDot component reads pendingAction)
-                dispatchAction({ type: 'click_dot', payload: { x, y, label } })
+                dispatchAction({ type: 'click_dot', payload: { selector, label } })
 
                 // Step 2: perform the actual DOM click after dot appears
                 setTimeout(() => {
@@ -318,7 +318,7 @@ export function useAgentSocket() {
                     } catch (err) {
                         addLog('error', `Click failed: ${err.message}`)
                     }
-                }, 300)
+                }, 500)
                 break
             }
             

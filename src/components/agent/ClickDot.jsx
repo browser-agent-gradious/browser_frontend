@@ -20,18 +20,21 @@ export default function ClickDot() {
     // React to click_dot actions from the agent backend
     useEffect(() => {
         if (pendingAction?.type === 'click_dot') {
-            const { x, y, label } = pendingAction.payload
+            const { selector, label } = pendingAction.payload
             const id = Date.now() + Math.random()
+
+            // Use the function to get coordinates from selector if provided, otherwise use x/y directly
+            const {x, y} = getClickDotCoordinates(selector)
 
             setDots(prev => [...prev, { id, x, y, label, phase: 'enter' }])
 
-            // After 2.2s start fade-out, after 2.8s remove
+            // After 1.2s start fade-out, after 1.8s remove
             setTimeout(() => {
                 setDots(prev => prev.map(d => d.id === id ? { ...d, phase: 'exit' } : d))
-            }, 1200)
+            }, 1000)
             setTimeout(() => {
                 setDots(prev => prev.filter(d => d.id !== id))
-            }, 1800)
+            }, 1200)
 
             clearPendingAction()
         }
@@ -53,6 +56,27 @@ export default function ClickDot() {
             ))}
         </>
     )
+}
+
+/**
+ * Function to get the coordinate of the element from selector, and return the center point of the element.
+ * @param {*} selector 
+ * @returns { x: number, y: number }
+ */ 
+export const getClickDotCoordinates = (selector) => {
+    try {
+        const element = document.querySelector(selector)
+        if (!element) throw new Error(`Element not found for selector: ${selector}`)
+        
+        const rect = element.getBoundingClientRect()
+        return {
+            x: rect.left + rect.width / 2,
+            y: rect.top + rect.height / 2,
+        }
+    } catch (error) {
+        console.error('Error in getClickDotCoordinates:', error)
+        return { x: 0, y: 0 } // Fallback to (0,0) if there's an error
+    }
 }
 
 // ── Inline styles (no CSS module needed — fully dynamic) ─────────────────────
