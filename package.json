@@ -2,6 +2,14 @@
     "name": "hr-portal",
     "version": "1.0.0",
     "description": "Browser agent frontend",
+    "homepage": "https://github.com/browser-agent-gradious/browser_frontend#readme",
+    "bugs": {
+        "url": "https://github.com/browser-agent-gradious/browser_frontend/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/browser-agent-gradious/browser_frontend.git"
+    },
     "license": "ISC",
     "author": "",
     "type": "module",
