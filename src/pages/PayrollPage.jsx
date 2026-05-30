@@ -5,6 +5,7 @@ import Badge from '../components/ui/Badge.jsx'
 import Card from '../components/ui/Card.jsx'
 import Dropdown from '../components/ui/Dropdown.jsx'
 import { useAgentAction } from '../context/AgentContext.jsx'
+import { downloadPayslip } from '../utils/downloadService.js'
 import { payrollData } from '../data/payrollData.js'
 import styles from './PayrollPage.module.css'
 
@@ -20,6 +21,9 @@ export default function PayrollPage() {
     const months = Object.keys(payrollData)
 
     const [selectedMonth, setSelectedMonth] = useState(months[0])
+
+    // Inside PayrollPage(), add a loading state:
+    const [downloading, setDownloading] = useState(false)
 
     const currentPayroll = payrollData[selectedMonth]
 
@@ -44,6 +48,17 @@ export default function PayrollPage() {
             value: `₹ ${fmt(s.netSalary)}`,
         },
     ]
+
+    const handleDownload = async () => {
+        setDownloading(true)
+        try {
+            await downloadPayslip(selectedMonth)
+        } catch (err) {
+            console.error('Download failed:', err)
+        } finally {
+            setDownloading(false)
+        }
+    }
 
     // Agent action: update_payroll_month
     // Backend sends: { type: 'update_payroll_month', payload: { month: 'September 2024' } }
@@ -134,8 +149,13 @@ export default function PayrollPage() {
                             {currentPayroll.status}
                         </Badge>
 
-                        <button id="download-payslip-button" className={styles.downloadBtn}>
-                            Download
+                        <button
+                            id="download-payslip-button"
+                            className={styles.downloadBtn}
+                            onClick={handleDownload}
+                            disabled={downloading}
+                        >
+                            {downloading ? 'Downloading...' : 'Download'}
                         </button>
 
                     </div>

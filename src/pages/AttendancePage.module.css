@@ -34,6 +34,14 @@
     box-shadow: 0 2px 6px rgba(0,0,0,0.04);
 }
 
+.dropdownWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: fit-content;
+    min-width: 200px;
+}
+
 .dropdown:hover {
     border-color: var(--color-primary);
 }

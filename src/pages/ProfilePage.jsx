@@ -2,6 +2,7 @@ import React from 'react'
 import PageLayout from '../components/layout/PageLayout.jsx'
 import Card from '../components/ui/Card.jsx'
 import Badge from '../components/ui/Badge.jsx'
+import { downloadProfileDocument } from '../utils/downloadService.js'
 import { employee, documents } from '../data/profileData.js'
 import styles from './ProfilePage.module.css'
 
@@ -79,6 +80,7 @@ export default function ProfilePage() {
                                 className={styles.docDownload} 
                                 id={`${(doc.name).toLowerCase().replaceAll(' ', '-')}-download-btn`} 
                                 aria-label={`Download ${doc.name}`}
+                                onClick={() => downloadProfileDocument(doc.type, doc.name)}
                             >
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />

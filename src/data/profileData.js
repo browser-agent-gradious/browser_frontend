@@ -13,8 +13,8 @@ export const employee = {
 }
 
 export const documents = [
-    { id: 1, name: 'Offer Letter', date: '2022-08-10', type: 'PDF' },
-    { id: 2, name: 'Appointment Letter', date: '2022-08-15', type: 'PDF' },
-    { id: 3, name: 'PF Statement FY2025', date: '2025-05-01', type: 'PDF' },
-    { id: 4, name: 'Form 16 FY2025', date: '2025-06-15', type: 'PDF' },
+    { id: 1, type: 'offer-letter',  name: 'Offer Letter', date: '2022-08-10'},
+    { id: 2, type: 'appointment-letter', name: 'Appointment Letter', date: '2022-08-15'},
+    { id: 3, type: 'form-16', name: 'PF Statement FY2025', date: '2025-05-01'},
+    { id: 4, type: 'pf-statement', name: 'Form 16 FY2025', date: '2025-06-15'},
 ]
