@@ -5,7 +5,7 @@ export const employee = {
     phone: '+91 98765 43210',
     department: 'Engineering',
     designation: 'Senior Software Engineer',
-    reportingManager: 'Priya Sharma',
+    reportingManager: 'Preethi Shetty',
     joiningDate: '2022-08-15',
     employmentType: 'Full-time',
     location: 'Hyderabad, Telangana',
