@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import PageLayout from '../components/layout/PageLayout.jsx'
 import StatCard from '../components/ui/StatCard.jsx'
+import Dropdown from '../components/ui/Dropdown.jsx'
 import { useAgentAction } from '../context/AgentContext.jsx'
 import { attendanceSummary, attendanceData } from '../data/attendanceData.js'
 import styles from './AttendancePage.module.css'
@@ -11,14 +12,21 @@ const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 export default function AttendancePage() {
 
+    // Get the list of months from attendanceData
     const months = Object.keys(attendanceData)
 
     const [selectedMonth, setSelectedMonth] = useState(months[0])
 
+    // Get the attendance data for the selected month
     const currentMonth = attendanceData[selectedMonth]
 
+    // Get the logs for the selected month
     const currentLogs = currentMonth.logs
 
+    // Dropdown ref for agent actions
+    const monthDropdownRef = useRef(null)
+
+    // Calculate summary stats for the current month
     const s = {
         present: currentLogs.filter(
             (log) => log.status === 'Present'
@@ -32,6 +40,8 @@ export default function AttendancePage() {
             (log) => log.status === 'Absent'
         ).length,
     }
+
+    // Prepare summary stats for display
     const summaryStats = [
         {
             label: 'Present',
@@ -51,6 +61,8 @@ export default function AttendancePage() {
             className: styles.leaveCard,
         },
     ]
+
+    // Function to render calendar days with attendance status
     const renderCalendarDays = () => {
 
         const days = []
@@ -61,6 +73,7 @@ export default function AttendancePage() {
             )
         }
 
+        {/* Render days with attendance status */}
         for (let day = 1; day <= currentMonth.totalDays; day++) {
 
             const status = currentMonth.attendance[day]
@@ -70,6 +83,7 @@ export default function AttendancePage() {
                     key={day}
                     className={`${styles.dayCell} ${status ? styles[status.replace(' ', '')] : ''}`}
                 >
+                    {/* Show day number and status badge */}
                     <span className={styles.dayNumber}>
                         {day}
                     </span>
@@ -89,18 +103,34 @@ export default function AttendancePage() {
     // Agent action: update_attendance_month
     // Backend sends: { type: 'update_attendance_month', payload: { month: 'September 2024' } }
     // This allows the agent to change the month view based on user queries like "Show me my attendance for September."
+    // useAgentAction('update_attendance_month', (payload) => {
+    //     console.log('Agent action received:', payload.month)
+    //     console.log('Available months:', months)
+        
+    //     if (attendanceData[payload.month]) {
+    //         setSelectedMonth(payload.month)
+    //     }
+    //     else {
+    //         console.warn(`Month "${payload.month}" not found in attendanceData`)
+    //     }
+    // })
+
     useAgentAction('update_attendance_month', (payload) => {
-        if (attendanceData[payload.month]) {
-            setSelectedMonth(payload.month)
+        if (attendanceData[payload.month] && monthDropdownRef.current) {
+            monthDropdownRef.current.dropdown(payload.month)
+        }
+        else {
+            console.warn(`Month "${payload.month}" not found in attendanceData`)
         }
     })
 
+    // TODO: Add id or some form of identifiers to elements. So that selectors can work correctly. For example, the dropdown can have id "attendance-month-dropdown" and options can have ids like "attendance-month-option-september" etc.
     return (
         <PageLayout
             title="Attendance"
             subtitle="Monthly attendance overview"
         >
-
+            {/* Summary stats */}
             <div className={styles.statsGrid}>
                 {summaryStats.map((item) => (
                     <div
@@ -114,7 +144,8 @@ export default function AttendancePage() {
                     </div>
                 ))}
             </div>
-
+            
+            {/* Month selector */}
             <div className={styles.headerRow}>
 
                 <div className={styles.dropdownWrapper}>
@@ -123,7 +154,7 @@ export default function AttendancePage() {
                         Monthly View
                     </label>
 
-                    <select 
+                    {/* <select 
                         id="attendance-month-dropdown"
                         className={styles.dropdown}
                         value={selectedMonth}
@@ -134,12 +165,20 @@ export default function AttendancePage() {
                                 {month}
                             </option>
                         ))}
-                    </select>
+                    </select> */}
 
+                    <Dropdown
+                        id="attendance-month-dropdown"
+                        ref={monthDropdownRef}
+                        options={months.map((m) => ({ value: m, label: m }))}
+                        value={selectedMonth}
+                        onChange={setSelectedMonth}
+                    />
                 </div>
 
             </div>
-
+            
+            {/* Calendar view */}
             <div className={styles.calendarWrapper}>
 
                 <div className={styles.weekDays}>
@@ -155,6 +194,8 @@ export default function AttendancePage() {
                 </div>
 
             </div>
+
+            {/* Attendance logs table */}
             <section className={styles.logsSection}>
 
                 <h2 className={styles.logsTitle}>

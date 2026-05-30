@@ -1,3 +1,4 @@
+// Sample attendance data for 3 months (March, April, May 2026)
 export const leaveDates = {
     '2026-05-12': 'SickLeave',
     '2026-04-17': 'CasualLeave',
@@ -25,6 +26,7 @@ const checkOutTimes = [
     '6:22 PM',
 ]
 
+// Utility functions to generate attendance data
 const convertToMinutes = (time) => {
 
     const [hourMinute, modifier] = time.split(' ')
@@ -42,6 +44,7 @@ const convertToMinutes = (time) => {
     return hours * 60 + minutes
 }
 
+// Calculate hours between check-in and check-out times
 const calculateHours = (checkIn, checkOut) => {
 
     const inMinutes = convertToMinutes(checkIn)
@@ -55,6 +58,7 @@ const calculateHours = (checkIn, checkOut) => {
     return `${hrs}h ${mins}m`
 }
 
+// Generate attendance data for a given month and year
 const generateAttendance = (year, month, totalDays) => {
 
     const attendance = {}
@@ -82,7 +86,8 @@ const generateAttendance = (year, month, totalDays) => {
         if (weekDay === 0 || weekDay === 6) {
             continue
         }
-
+        
+        // Format date as YYYY-MM-DD
         const formattedDate =
             `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
 

@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import PageLayout from '../components/layout/PageLayout.jsx'
 import StatCard from '../components/ui/StatCard.jsx'
 import Badge from '../components/ui/Badge.jsx'
 import Card from '../components/ui/Card.jsx'
+import Dropdown from '../components/ui/Dropdown.jsx'
 import { useAgentAction } from '../context/AgentContext.jsx'
 import { payrollData } from '../data/payrollData.js'
 import styles from './PayrollPage.module.css'
@@ -24,6 +25,9 @@ export default function PayrollPage() {
 
     const s = currentPayroll.summary
 
+    // Dropdown ref for agent actions
+    const monthDropdownRef = useRef(null)
+
     const summaryStats = [
         {
             label: 'Gross Salary',
@@ -44,11 +48,20 @@ export default function PayrollPage() {
     // Agent action: update_payroll_month
     // Backend sends: { type: 'update_payroll_month', payload: { month: 'September 2024' } }
     // This allows the agent to change the month view based on user queries like "Show me my payroll for September."
+    // useAgentAction('update_payroll_month', (payload) => {
+    //     if (payrollData[payload.month]) {
+    //         setSelectedMonth(payload.month)
+    //     }
+    // })
+
     useAgentAction('update_payroll_month', (payload) => {
-        if (payrollData[payload.month]) {
-            setSelectedMonth(payload.month)
-        }
-    })
+            if (payrollData[payload.month] && monthDropdownRef.current) {
+                monthDropdownRef.current.dropdown(payload.month)
+            }
+            else {
+                console.warn(`Month "${payload.month}" not found in payrollData`)
+            }
+        })
 
     return (
         <PageLayout
@@ -74,7 +87,7 @@ export default function PayrollPage() {
                         Payroll Month
                     </label>
 
-                    <select 
+                    {/* <select 
                         id="payroll-month-dropdown"
                         className={styles.dropdown}
                         value={selectedMonth}
@@ -85,7 +98,15 @@ export default function PayrollPage() {
                                 {month}
                             </option>
                         ))}
-                    </select>
+                    </select> */}
+
+                    <Dropdown
+                        id="payroll-month-dropdown"
+                        ref={monthDropdownRef}
+                        options={months.map((m) => ({ value: m, label: m }))}
+                        value={selectedMonth}
+                        onChange={setSelectedMonth}
+                    />
 
                 </div>
 

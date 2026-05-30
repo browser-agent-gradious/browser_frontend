@@ -52,27 +52,41 @@ export default function ProfilePage() {
 
             {/* Documents */}
             <section className={styles.docsSection}>
+                
                 <h2 className={styles.sectionTitle}>Documents</h2>
+
                 <div className={styles.docsList}>
                     {documents.map(doc => (
+                        
                         <Card key={doc.id} className={styles.docCard}>
+                            
+                            {/* Document Icon */}
                             <div className={styles.docIcon}>
                                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                                     <polyline points="14 2 14 8 20 8" />
                                 </svg>
                             </div>
+
+                            {/* Document Info */}
                             <div className={styles.docInfo}>
                                 <span className={styles.docName}>{doc.name}</span>
                                 <span className={styles.docMeta}>{doc.type} · {doc.date}</span>
                             </div>
-                            <button className={styles.docDownload} aria-label={`Download ${doc.name}`}>
+
+                            {/* Download button */}
+                            <button 
+                                className={styles.docDownload} 
+                                id={`${(doc.name).toLowerCase().replaceAll(' ', '-')}-download-btn`} 
+                                aria-label={`Download ${doc.name}`}
+                            >
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                                     <polyline points="7 10 12 15 17 10" />
                                     <line x1="12" y1="15" x2="12" y2="3" />
                                 </svg>
                             </button>
+
                         </Card>
                     ))}
                 </div>
