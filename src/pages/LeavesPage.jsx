@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import PageLayout from '../components/layout/PageLayout.jsx'
 import DataTable from '../components/ui/DataTable.jsx'
 import Badge from '../components/ui/Badge.jsx'
 import Button from '../components/ui/Button.jsx'
 import Modal from '../components/ui/Modal.jsx'
 import StatCard from '../components/ui/StatCard.jsx'
+import Dropdown from '../components/ui/Dropdown.jsx'
 import { useAgentAction } from '../context/AgentContext.jsx'
 import { leaveBalance, leaveHistory, leaveTypes } from '../data/leavesData.js'
 import styles from './LeavesPage.module.css'
@@ -31,11 +32,28 @@ export default function LeavesPage() {
     const [form, setForm] = useState(EMPTY_FORM)
     const [submitted, setSubmitted] = useState(false)
 
+    const leaveTypeDropdownRef = useRef(null)
+
     // ── Agent action: fill_form ──────────────────────────────────────────────
     // Backend sends: { type: 'fill_form', payload: { field: 'type', value: 'Sick Leave' } }
     useAgentAction('fill_form', (payload) => {
         setModalOpen(true)
-        setForm(prev => ({ ...prev, [payload.field]: payload.value }))
+
+        // setForm(prev => ({ ...prev, [payload.field]: payload.value }))
+
+        if (payload.field === 'type' && leaveTypeDropdownRef.current) {
+            // Agent visually opens dropdown and clicks the option
+            leaveTypeDropdownRef.current.dropdown(payload.value)
+
+            // Also update form state after the dropdown animation delay
+            setTimeout(() => {
+                setForm(prev => ({ ...prev, type: payload.value }))
+            }, 650)
+            
+        } else {
+            // For other fields (from, to, reason) — direct state update as before
+            setForm(prev => ({ ...prev, [payload.field]: payload.value }))
+        }
     })
 
     // Agent can also trigger open_modal
@@ -107,9 +125,11 @@ export default function LeavesPage() {
                     </div>
                 ) : (
                     <form onSubmit={handleSubmit} className={styles.form}>
+
                         <label className={styles.label}>
                             Leave Type
-                            <select id="leave-type-dropdown"
+
+                            {/* <select id="leave-type-dropdown"
                                 name="type"
                                 value={form.type}
                                 onChange={handleChange}
@@ -120,7 +140,19 @@ export default function LeavesPage() {
                                 {leaveTypes.map(t => (
                                     <option key={t} value={t}>{t}</option>
                                 ))}
-                            </select>
+                            </select> */}
+
+                            <Dropdown
+                                id="leave-type-dropdown"
+                                ref={leaveTypeDropdownRef}
+                                options={[
+                                    { value: '', label: 'Select type' },
+                                    ...leaveTypes.map((t) => ({ value: t, label: t }))
+                                ]}
+                                value={form.type}
+                                onChange={(val) => setForm(prev => ({ ...prev, type: val }))}
+                            />
+
                         </label>
 
                         <div className={styles.row}>

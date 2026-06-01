@@ -51,7 +51,7 @@ const Dropdown = forwardRef(function Dropdown(
             {/* Trigger */}
             <button
                 type="button"
-                className={`${styles.trigger} ${isOpen ? styles.triggerOpen : ''}`}
+                className={`${styles.trigger} dropdownTrigger ${isOpen ? styles.triggerOpen : ''}`}
                 id={`${id}-trigger`}
                 onClick={() => setIsOpen((prev) => !prev)}
                 aria-haspopup="listbox"
