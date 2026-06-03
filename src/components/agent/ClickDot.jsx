@@ -28,7 +28,7 @@ export default function ClickDot() {
 
             setDots(prev => [...prev, { id, x, y, label, phase: 'enter' }])
 
-            // After 1.2s start fade-out, after 1.8s remove
+            // After 1.0s start fade-out, after 1.2s remove
             setTimeout(() => {
                 setDots(prev => prev.map(d => d.id === id ? { ...d, phase: 'exit' } : d))
             }, 1000)
