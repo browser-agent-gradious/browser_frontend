@@ -14,6 +14,8 @@ const AgentContext = createContext(null)
  *   - pendingAction  : { type, payload } — latest action from backend for pages to consume
  */
 export function AgentProvider({ children }) {
+    const [videoFrame, setVideoFrame] = useState()
+    const [sessionId, setSessionId] = useState(null)
     const [isOpen, setIsOpen] = useState(false)
     const [isConnected, setIsConnected] = useState(false)
     const [isRecording, setIsRecording] = useState(false)
@@ -57,16 +59,20 @@ export function AgentProvider({ children }) {
         transcript,
         logs,
         pendingAction,
+        sessionId,
         openDialog,
         closeDialog,
         toggleDialog,
         setIsConnected,
         setIsRecording,
         setTranscript,
+        setSessionId,
         addLog,
         clearLogs,
         dispatchAction,
         clearPendingAction,
+        videoFrame, 
+        setVideoFrame,
     }
 
     return (

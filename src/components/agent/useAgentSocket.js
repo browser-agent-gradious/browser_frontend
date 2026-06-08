@@ -47,6 +47,8 @@ export function useAgentSocket() {
         addLog,
         dispatchAction,
         isRecording,
+        setVideoFrame,
+        setSessionId,
     } = useAgent()
 
     const navigate = useNavigate()
@@ -121,13 +123,11 @@ export function useAgentSocket() {
         if (isOpen) {
             connect()
         } else {
-            // Stop any active recording if dialog is closed
-            stopRecording()
+            // Stop any active recording and disconnect when dialog closes
+            // stopRecording()
+            disconnect()
         }
-        // We intentionally don't disconnect on close so the agent can finish
-        // speaking. Uncomment the line below to disconnect on close instead:
-        // else { disconnect() }
-    }, [isOpen])
+    }, [isOpen, connect, disconnect,])
 
     // Cleanup on unmount (app close / hot reload)
     useEffect(() => {
@@ -176,6 +176,12 @@ export function useAgentSocket() {
      */
     const handleServerMessage = useCallback((msg) => {
         switch (msg.type) {
+            case 'session_init':
+                // Backend sends a unique session ID for this connection
+                setSessionId(msg.session_id)
+                addLog('system', `Session started: ${msg.session_id}`)
+                break
+
             case 'ack':
                 addLog('ack', msg.text)
                 // If backend echoes the STT transcript, show it
@@ -188,6 +194,13 @@ export function useAgentSocket() {
 
             case 'result':
                 addLog('result', msg.text)
+                // Final result for this turn — stop showing screencast/video
+                setVideoFrame(null)
+                break
+
+            case 'screencast_end':
+                // Backend explicitly signals end of screencast
+                setVideoFrame(null)
                 break
 
             case 'error':
@@ -209,8 +222,16 @@ export function useAgentSocket() {
 
             case 'action':
                 addLog('step', `⚡ ${msg.action}`)
-                executeAction(msg.action, msg.payload)
+                // executeAction(msg.action, msg.payload)
                 break
+
+            case 'screencast_frame': {
+                // Backend sends screencast frame with base64 JPEG data
+                const mimeType = msg.mimeType || 'image/jpeg'
+                const dataUrl = `data:${mimeType};base64,${msg.data}`
+                setVideoFrame(dataUrl)
+                break
+            }
 
             default:
                 addLog('system', `Unknown: ${msg.type}`)

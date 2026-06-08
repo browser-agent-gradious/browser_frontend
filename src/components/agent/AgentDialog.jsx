@@ -29,6 +29,8 @@ export default function AgentDialog() {
         transcript,
         logs,
         clearLogs,
+        videoFrame,      // ← add
+        setVideoFrame,
     } = useAgent()
 
     // useAgentSocket handles WS + MediaRecorder; connect() is called internally
@@ -101,68 +103,138 @@ export default function AgentDialog() {
             aria-label="Voice Agent"
             aria-hidden={!isOpen}
         >
-            <div className={styles.container}>
+            {videoFrame ? (
+                <div className={styles.expandedInner}>
+                    <div className={styles.videoPane} onClick={() => setVideoFrame(null)}>
+                        <img src={videoFrame} alt="Agent screencast" className={styles.videoFrame} />
+                    </div>
+                    <div className={styles.container}>
 
-                {/* ── Header ─────────────────────────────────────────── */}
-                <div className={styles.header}>
-                    <span className={styles.title}>Voice Agent</span>
-                    <span
-                        className={`${styles.statusDot} ${isConnected ? styles.statusDotConnected : ''}`}
-                        title={isConnected ? 'Connected' : 'Disconnected'}
-                    />
-                </div>
-
-                {/* ── Mic button ─────────────────────────────────────── */}
-                <button
-                    className={`${styles.micButton} ${isRecording ? styles.micRecording : ''}`}
-                    onMouseDown={onMicMouseDown}
-                    onMouseUp={onMicMouseUp}
-                    onMouseLeave={onMicMouseLeave}
-                    onTouchStart={onMicTouchStart}
-                    onTouchEnd={onMicTouchEnd}
-                    aria-label={isRecording ? 'Stop recording' : 'Start recording'}
-                    title="Click to toggle · Hold to push-to-talk · Space to push-to-talk"
-                    disabled={!isConnected}
-                >
-                    <svg fill="white" height="34" width="34" viewBox="0 0 24 24">
-                        <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" />
-                        <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" />
-                    </svg>
-                </button>
-
-                {/* ── Status / hint ──────────────────────────────────── */}
-                <div className={styles.statusText}>{statusText}</div>
-                <div className={styles.hintText}>
-                    click = toggle &nbsp;·&nbsp; space = push-to-talk
-                </div>
-
-                {/* ── Transcript box ─────────────────────────────────── */}
-                <div className={`${styles.transcriptBox} ${transcript ? styles.transcriptActive : ''}`}>
-                    {transcript || 'Ready for voice commands…'}
-                </div>
-
-                {/* ── Logs header ─────────────────────────────────────── */}
-                <div className={styles.logsHeader}>
-                    <span>Activity Log</span>
-                    <button className={styles.clearBtn} onClick={clearLogs} aria-label="Clear logs">
-                        Clear
-                    </button>
-                </div>
-
-                {/* ── Logs pane ──────────────────────────────────────── */}
-                <div className={styles.logs} role="log" aria-live="polite">
-                    {logs.map((entry, i) => (
-                        <div
-                            key={entry.id ?? i}
-                            className={`${styles.logLine} ${logTypeClass[entry.type] || ''}`}
-                        >
-                            &gt; {entry.text}
+                        {/* ── Header ─────────────────────────────────────────── */}
+                        <div className={styles.header}>
+                            <span className={styles.title}>Voice Agent</span>
+                            <span
+                                className={`${styles.statusDot} ${isConnected ? styles.statusDotConnected : ''}`}
+                                title={isConnected ? 'Connected' : 'Disconnected'}
+                            />
                         </div>
-                    ))}
-                    <div ref={logsEndRef} />
-                </div>
 
-            </div>
+                        {/* ── Mic button ─────────────────────────────────────── */}
+                        <button
+                            className={`${styles.micButton} ${isRecording ? styles.micRecording : ''}`}
+                            onMouseDown={onMicMouseDown}
+                            onMouseUp={onMicMouseUp}
+                            onMouseLeave={onMicMouseLeave}
+                            onTouchStart={onMicTouchStart}
+                            onTouchEnd={onMicTouchEnd}
+                            aria-label={isRecording ? 'Stop recording' : 'Start recording'}
+                            title="Click to toggle · Hold to push-to-talk · Space to push-to-talk"
+                            disabled={!isConnected}
+                        >
+                            <svg fill="white" height="34" width="34" viewBox="0 0 24 24">
+                                <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" />
+                                <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" />
+                            </svg>
+                        </button>
+
+                        {/* ── Status / hint ──────────────────────────────────── */}
+                        <div className={styles.statusText}>{statusText}</div>
+                        <div className={styles.hintText}>
+                            click = toggle &nbsp;·&nbsp; space = push-to-talk
+                        </div>
+
+                        {/* ── Transcript box ─────────────────────────────────── */}
+                        <div className={`${styles.transcriptBox} ${transcript ? styles.transcriptActive : ''}`}>
+                            {transcript || 'Ready for voice commands…'}
+                        </div>
+
+                        {/* ── Logs header ─────────────────────────────────────── */}
+                        <div className={styles.logsHeader}>
+                            <span>Activity Log</span>
+                            <button className={styles.clearBtn} onClick={clearLogs} aria-label="Clear logs">
+                                Clear
+                            </button>
+                        </div>
+
+                        {/* ── Logs pane ──────────────────────────────────────── */}
+                        <div className={styles.logs} role="log" aria-live="polite">
+                            {logs.map((entry, i) => (
+                                <div
+                                    key={entry.id ?? i}
+                                    className={`${styles.logLine} ${logTypeClass[entry.type] || ''}`}
+                                >
+                                    &gt; {entry.text}
+                                </div>
+                            ))}
+                            <div ref={logsEndRef} />
+                        </div>
+
+                    </div>
+                </div>
+            ) : (
+                <div className={styles.container}>
+
+                    {/* ── Header ─────────────────────────────────────────── */}
+                    <div className={styles.header}>
+                        <span className={styles.title}>Voice Agent</span>
+                        <span
+                            className={`${styles.statusDot} ${isConnected ? styles.statusDotConnected : ''}`}
+                            title={isConnected ? 'Connected' : 'Disconnected'}
+                        />
+                    </div>
+
+                    {/* ── Mic button ─────────────────────────────────────── */}
+                    <button
+                        className={`${styles.micButton} ${isRecording ? styles.micRecording : ''}`}
+                        onMouseDown={onMicMouseDown}
+                        onMouseUp={onMicMouseUp}
+                        onMouseLeave={onMicMouseLeave}
+                        onTouchStart={onMicTouchStart}
+                        onTouchEnd={onMicTouchEnd}
+                        aria-label={isRecording ? 'Stop recording' : 'Start recording'}
+                        title="Click to toggle · Hold to push-to-talk · Space to push-to-talk"
+                        disabled={!isConnected}
+                    >
+                        <svg fill="white" height="34" width="34" viewBox="0 0 24 24">
+                            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" />
+                            <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" />
+                        </svg>
+                    </button>
+
+                    {/* ── Status / hint ──────────────────────────────────── */}
+                    <div className={styles.statusText}>{statusText}</div>
+                    <div className={styles.hintText}>
+                        click = toggle &nbsp;·&nbsp; space = push-to-talk
+                    </div>
+
+                    {/* ── Transcript box ─────────────────────────────────── */}
+                    <div className={`${styles.transcriptBox} ${transcript ? styles.transcriptActive : ''}`}>
+                        {transcript || 'Ready for voice commands…'}
+                    </div>
+
+                    {/* ── Logs header ─────────────────────────────────────── */}
+                    <div className={styles.logsHeader}>
+                        <span>Activity Log</span>
+                        <button className={styles.clearBtn} onClick={clearLogs} aria-label="Clear logs">
+                            Clear
+                        </button>
+                    </div>
+
+                    {/* ── Logs pane ──────────────────────────────────────── */}
+                    <div className={styles.logs} role="log" aria-live="polite">
+                        {logs.map((entry, i) => (
+                            <div
+                                key={entry.id ?? i}
+                                className={`${styles.logLine} ${logTypeClass[entry.type] || ''}`}
+                            >
+                                &gt; {entry.text}
+                            </div>
+                        ))}
+                        <div ref={logsEndRef} />
+                    </div>
+
+                </div>
+            )}
         </div>
     )
 }
