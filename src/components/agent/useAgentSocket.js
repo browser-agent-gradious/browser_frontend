@@ -118,6 +118,7 @@ export function useAgentSocket() {
      */
     const sendStepAck = useCallback((taskId, stepIndex) => {
         sendJSON({ type: 'step_ack', task_id: taskId, step_index: stepIndex })
+        console.log(`Sent step_ack for task ${taskId}, step ${stepIndex}`)
     }, [sendJSON])
 
     // ── Message handler ─────────────────────────────────────────────────────
@@ -141,6 +142,7 @@ export function useAgentSocket() {
                 resetTask()
                 setCurrentTask({ task_id: msg.task_id, page: msg.page, intent_summary: msg.intent_summary })
                 addLog('step', `Starting task: ${msg.intent_summary} on ${msg.page}`)
+                console.log(`Task ${msg.task_id} started: ${msg.intent_summary} on ${msg.page}`)
                 break
 
             case 'task_steps':
@@ -148,6 +150,7 @@ export function useAgentSocket() {
                 // AgentDialog will play them sequentially and ACK each one
                 setTaskSteps(msg.steps)
                 setCurrentStepIndex(0)
+                console.log(`Task ${msg.task_id} has ${msg.steps.length} steps, Tasks: ${msg.steps.map(s => s.label).join(', ')}`)
                 addLog('system', `${msg.steps.length} steps ready — starting tutorial…`)
                 break
 
@@ -155,12 +158,14 @@ export function useAgentSocket() {
                 // Backend confirms Playwright action for step_index is complete
                 // AgentDialog advances to the next step after receiving this
                 setCurrentStepIndex(msg.step_index + 1)
+                console.log(`Step ${msg.step_index} complete.`)
                 break
 
             case 'task_end':
                 addLog('result', 'Task complete. You can now perform the same action yourself.')
                 resetTask()
                 // Keep screencast visible briefly so user sees final state, then clear
+                console.log('Task complete. Clearing screencast in 2 seconds...')
                 setTimeout(() => setVideoFrame(null), 2000)
                 break
 
@@ -202,6 +207,7 @@ export function useAgentSocket() {
                     source.start(0)
                     source.onended = () => { ctx.close(); resolve() }
                 }, (err) => { reject(err) })
+                console.log(`Playing step audio (${(bytes.length / 1024).toFixed(1)} KB)`)
             } catch (err) {
                 reject(err)
             }

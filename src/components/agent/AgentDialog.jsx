@@ -25,10 +25,16 @@ export default function AgentDialog() {
 
     // ACK loop — play narration audio then signal backend to perform the action
     useEffect(() => {
+        // Don't do anything if there's no task or no steps, or if we're already waiting for an ACK
         if (!currentTask || !taskSteps.length) return
+
+        // Don't do anything if we've already played all steps
         if (currentStepIndex >= taskSteps.length) return
+
+        // Don't do anything if an ACK is already in flight
         if (ackInFlight.current) return
 
+        // Play the current step's audio, then send an ACK to the backend
         const step = taskSteps[currentStepIndex]
         if (!step) return
 
