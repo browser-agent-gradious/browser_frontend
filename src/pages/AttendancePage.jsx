@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react'
 import PageLayout from '../components/layout/PageLayout.jsx'
 import StatCard from '../components/ui/StatCard.jsx'
 import Dropdown from '../components/ui/Dropdown.jsx'
-import { useAgentAction } from '../context/AgentContext.jsx'
 import { attendanceSummary, attendanceData } from '../data/attendanceData.js'
 import styles from './AttendancePage.module.css'
 import DataTable from '../components/ui/DataTable.jsx'
@@ -99,30 +98,6 @@ export default function AttendancePage() {
 
         return days
     }
-
-    // Agent action: update_attendance_month
-    // Backend sends: { type: 'update_attendance_month', payload: { month: 'September 2024' } }
-    // This allows the agent to change the month view based on user queries like "Show me my attendance for September."
-    // useAgentAction('update_attendance_month', (payload) => {
-    //     console.log('Agent action received:', payload.month)
-    //     console.log('Available months:', months)
-        
-    //     if (attendanceData[payload.month]) {
-    //         setSelectedMonth(payload.month)
-    //     }
-    //     else {
-    //         console.warn(`Month "${payload.month}" not found in attendanceData`)
-    //     }
-    // })
-
-    useAgentAction('update_attendance_month', (payload) => {
-        if (attendanceData[payload.month] && monthDropdownRef.current) {
-            monthDropdownRef.current.dropdown(payload.month)
-        }
-        else {
-            console.warn(`Month "${payload.month}" not found in attendanceData`)
-        }
-    })
 
     // TODO: Add id or some form of identifiers to elements. So that selectors can work correctly. For example, the dropdown can have id "attendance-month-dropdown" and options can have ids like "attendance-month-option-september" etc.
     return (

@@ -2,32 +2,26 @@ import React, { createContext, useContext, useState, useCallback } from 'react'
 
 const AgentContext = createContext(null)
 
-/**
- * AgentProvider wraps the entire app.
- *
- * agentState holds:
- *   - isOpen         : whether the dialog popup is visible
- *   - isConnected    : WebSocket connection status
- *   - isRecording    : mic is actively capturing
- *   - transcript     : current live transcript text
- *   - logs           : array of { type, text } log entries
- *   - pendingAction  : { type, payload } — latest action from backend for pages to consume
- */
 export function AgentProvider({ children }) {
-    const [videoFrame, setVideoFrame] = useState()
-    const [sessionId, setSessionId] = useState(null)
     const [isOpen, setIsOpen] = useState(false)
     const [isConnected, setIsConnected] = useState(false)
     const [isRecording, setIsRecording] = useState(false)
     const [transcript, setTranscript] = useState('')
-    const [logs, setLogs] = useState([
-        { type: 'system', text: 'Ready for voice commands...' },
-    ])
-    const [pendingAction, setPendingAction] = useState(null)
+    const [sessionId, setSessionId] = useState(null)
+    const [videoFrame, setVideoFrame] = useState(null)
+    const [logs, setLogs] = useState([{ type: 'system', text: 'Ready for voice commands…' }])
+
+    // ── Task state (drives ACK loop in AgentDialog) ────────────────────────
+    // currentTask:  { task_id, page, intent_summary } | null
+    // taskSteps:    [{ step_index, label, audio_b64, mime_type }]
+    // currentStepIndex: which step we're currently playing/waiting on
+    const [currentTask, setCurrentTask] = useState(null)
+    const [taskSteps, setTaskSteps] = useState([])
+    const [currentStepIndex, setCurrentStepIndex] = useState(0)
 
     const openDialog = useCallback(() => setIsOpen(true), [])
     const closeDialog = useCallback(() => setIsOpen(false), [])
-    const toggleDialog = useCallback(() => setIsOpen(prev => !prev), [])
+    const toggleDialog = useCallback(() => setIsOpen(p => !p), [])
 
     const addLog = useCallback((type, text) => {
         setLogs(prev => [...prev, { type, text, id: Date.now() + Math.random() }])
@@ -37,71 +31,28 @@ export function AgentProvider({ children }) {
         setLogs([{ type: 'system', text: 'Logs cleared.' }])
     }, [])
 
-    /**
-     * Dispatch an action received from the agent backend.
-     * 
-     * Pages subscribe to pendingAction via useAgentAction() hook.
-     * 
-     * After consuming, pages call clearPendingAction().
-     */
-    const dispatchAction = useCallback((action) => {
-        setPendingAction(action)
+    const resetTask = useCallback(() => {
+        setCurrentTask(null)
+        setTaskSteps([])
+        setCurrentStepIndex(0)
     }, [])
-
-    const clearPendingAction = useCallback(() => {
-        setPendingAction(null)
-    }, [])
-
-    const value = {
-        isOpen,
-        isConnected,
-        isRecording,
-        transcript,
-        logs,
-        pendingAction,
-        sessionId,
-        openDialog,
-        closeDialog,
-        toggleDialog,
-        setIsConnected,
-        setIsRecording,
-        setTranscript,
-        setSessionId,
-        addLog,
-        clearLogs,
-        dispatchAction,
-        clearPendingAction,
-        videoFrame, 
-        setVideoFrame,
-    }
 
     return (
-        <AgentContext.Provider value={value}>
+        <AgentContext.Provider value={{
+            isOpen, isConnected, isRecording, transcript, sessionId, videoFrame, logs,
+            currentTask, taskSteps, currentStepIndex,
+            setIsOpen, setIsConnected, setIsRecording, setTranscript,
+            setSessionId, setVideoFrame, setCurrentTask, setTaskSteps, setCurrentStepIndex,
+            openDialog, closeDialog, toggleDialog,
+            addLog, clearLogs, resetTask,
+        }}>
             {children}
         </AgentContext.Provider>
     )
 }
 
-/** Main hook — access full agent context */
 export function useAgent() {
     const ctx = useContext(AgentContext)
     if (!ctx) throw new Error('useAgent must be used within AgentProvider')
     return ctx
-}
-
-/**
- * Convenience hook for pages that only need to react to agent actions.
- * 
- * Usage:
- *   useAgentAction('fill_form', (payload) => { ... })
- */
-export function useAgentAction(actionType, handler) {
-    const { pendingAction, clearPendingAction } = useContext(AgentContext)
-
-    React.useEffect(() => {
-        if (pendingAction && pendingAction.type === actionType) {
-            handler(pendingAction.payload)
-            clearPendingAction()
-        }
-    }, [pendingAction])
 }

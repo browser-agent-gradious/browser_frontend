@@ -4,7 +4,6 @@ import StatCard from '../components/ui/StatCard.jsx'
 import Badge from '../components/ui/Badge.jsx'
 import Card from '../components/ui/Card.jsx'
 import Dropdown from '../components/ui/Dropdown.jsx'
-import { useAgentAction } from '../context/AgentContext.jsx'
 import { downloadPayslip } from '../utils/downloadService.js'
 import { payrollData } from '../data/payrollData.js'
 import styles from './PayrollPage.module.css'
@@ -59,24 +58,6 @@ export default function PayrollPage() {
             setDownloading(false)
         }
     }
-
-    // Agent action: update_payroll_month
-    // Backend sends: { type: 'update_payroll_month', payload: { month: 'September 2024' } }
-    // This allows the agent to change the month view based on user queries like "Show me my payroll for September."
-    // useAgentAction('update_payroll_month', (payload) => {
-    //     if (payrollData[payload.month]) {
-    //         setSelectedMonth(payload.month)
-    //     }
-    // })
-
-    useAgentAction('update_payroll_month', (payload) => {
-            if (payrollData[payload.month] && monthDropdownRef.current) {
-                monthDropdownRef.current.dropdown(payload.month)
-            }
-            else {
-                console.warn(`Month "${payload.month}" not found in payrollData`)
-            }
-        })
 
     return (
         <PageLayout

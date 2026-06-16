@@ -6,7 +6,6 @@ import Button from '../components/ui/Button.jsx'
 import Modal from '../components/ui/Modal.jsx'
 import StatCard from '../components/ui/StatCard.jsx'
 import Dropdown from '../components/ui/Dropdown.jsx'
-import { useAgentAction } from '../context/AgentContext.jsx'
 import { leaveBalance, leaveHistory, leaveTypes } from '../data/leavesData.js'
 import styles from './LeavesPage.module.css'
 
@@ -33,33 +32,6 @@ export default function LeavesPage() {
     const [submitted, setSubmitted] = useState(false)
 
     const leaveTypeDropdownRef = useRef(null)
-
-    // ── Agent action: fill_form ──────────────────────────────────────────────
-    // Backend sends: { type: 'fill_form', payload: { field: 'type', value: 'Sick Leave' } }
-    useAgentAction('fill_form', (payload) => {
-        setModalOpen(true)
-
-        // setForm(prev => ({ ...prev, [payload.field]: payload.value }))
-
-        if (payload.field === 'type' && leaveTypeDropdownRef.current) {
-            // Agent visually opens dropdown and clicks the option
-            leaveTypeDropdownRef.current.dropdown(payload.value)
-
-            // Also update form state after the dropdown animation delay
-            setTimeout(() => {
-                setForm(prev => ({ ...prev, type: payload.value }))
-            }, 650)
-            
-        } else {
-            // For other fields (from, to, reason) — direct state update as before
-            setForm(prev => ({ ...prev, [payload.field]: payload.value }))
-        }
-    })
-
-    // Agent can also trigger open_modal
-    useAgentAction('open_modal', () => {
-        setModalOpen(true)
-    })
 
     const handleChange = (e) => {
         setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))

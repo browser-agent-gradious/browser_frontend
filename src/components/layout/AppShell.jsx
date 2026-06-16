@@ -8,33 +8,14 @@ import PayrollPage from '../../pages/PayrollPage.jsx'
 import ProfilePage from '../../pages/ProfilePage.jsx'
 import AgentButton from '../agent/AgentButton.jsx'
 import AgentDialog from '../agent/AgentDialog.jsx'
-import ClickDot from '../agent/ClickDot.jsx'
 
-/**
- * AppShell — the permanent scaffold.
- * 
- * Rendered inside BrowserRouter so useNavigate() works in child hooks.
- * Everything outside <Routes> never unmounts on navigation.
- *
- * Structure:
- * - Navbar          — sticky, never unmounts
- * - Routes          — only this subtree swaps on navigation
- * - AgentDialog     — outside Routes, never unmounts → state preserved
- * - AgentButton     — FAB, always visible
- * - ClickDot         — global click visualizer, always visible, pointerEvents: none
- * 
- * Render order (bottom → top by z-index):
- * - Navbar (z: 100)
- * - Routes → page content
- * - AgentDialog (z: 999)
- * - AgentButton (z: 1000)
- * - ClickDot (z: 999999) — topmost, pointerEvents: none
- */
+// ClickDot is removed — the red dot is now injected by Playwright's
+// __agent_show_interaction init script in the server browser, not here.
+
 export default function AppShell() {
     return (
         <>
             <Navbar />
-
             <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/leaves" element={<LeavesPage />} />
@@ -43,12 +24,9 @@ export default function AppShell() {
                 <Route path="/profile" element={<ProfilePage />} />
             </Routes>
 
-            {/* Agent components are OUTSIDE <Routes> — they never unmount during navigation */}
+            {/* Agent overlay — outside Routes so it never unmounts on navigation */}
             <AgentDialog />
             <AgentButton />
-
-            {/* Visual click debugger — renders red dot wherever agent clicks */}
-            <ClickDot />
         </>
     )
 }
